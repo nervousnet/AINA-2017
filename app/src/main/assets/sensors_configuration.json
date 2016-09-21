@@ -1,0 +1,42 @@
+{  "sensors_configurations" : [
+  {
+    "sensorName" : "Light",
+    "androidSensorType" : 5,
+    "parametersNames" : [
+      "Lux"
+    ],
+    "parametersTypes" : [
+      "double"
+    ],
+    "metadata" : [
+      "not supported yet"
+    ],
+    "androidParametersPositions" : [ 0 ],
+    "samplingPeriod" : 0
+  },
+  {
+      "sensorName" : "Accelerometer",
+      "androidSensorType" : 1,
+      "parametersNames" : [
+        "accX",
+        "accY",
+        "accZ"
+      ],
+      "parametersTypes" : [
+        "double",
+        "double",
+        "double"
+      ],
+      "metadata" : [
+        "not supported yet",
+        "not supported yet",
+        "not supported yet"
+      ],
+      "androidParametersPositions" : [ 0, 1, 2 ],
+      "samplingPeriod" : 100000
+    }
+
+
+  ]
+
+}
