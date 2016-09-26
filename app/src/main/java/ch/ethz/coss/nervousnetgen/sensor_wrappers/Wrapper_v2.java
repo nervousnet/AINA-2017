@@ -32,6 +32,9 @@ public class Wrapper_v2 implements iWrapper, SensorEventListener {
     private int samplingPeriod;
     private final int[] parametersPositions;
 
+    // Extra for testing
+    private iDatabaseHelper databaseHandlerCommonTable;
+
 
     /**
      *
@@ -99,11 +102,6 @@ public class Wrapper_v2 implements iWrapper, SensorEventListener {
         return true;
     }
 
-    @Override
-    public ArrayList<Object[]> getAll() {
-        return this.databaseHandler.getAll(this.sensorName);
-    }
-
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
@@ -117,13 +115,14 @@ public class Wrapper_v2 implements iWrapper, SensorEventListener {
         // 1. Insert timestamp first
         sample.put("timestamp" , timestamp);
         sample.put("samplingPeriod" , samplingPeriod);
+        sample.put("metadata" , Arrays.toString(metadata));
         // 2. Insert values
+        Log.d(LOG_TAG, "timestamp " + sample.get("timestamp") + " sampling " + sample.get("samplingPeriod") + " metadata " + sample.get("metadata") );
         for (int i = 0; i < parametersPositions.length; i++) {
             Log.d(LOG_TAG, "Put (key, value) = (" + parametersNames[i] + ", " + sensorEvent.values[parametersPositions[i]] + ")");
             sample.put(parametersNames[i], sensorEvent.values[parametersPositions[i]]);
         }
-
-        databaseHandler.store(sample);
+                databaseHandler.store(sample);
     }
 
     @Override

@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
+import android.util.FloatProperty;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -22,15 +23,12 @@ public class DynamicStorageHandler extends SQLiteOpenHelper implements iDatabase
 
     private static final String LOG_TAG = DynamicStorageHandler.class.getSimpleName();
 
-    private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "VirtualSensorDB";
-
     private String tableName;
     private static final String ID = "ID";
     private String[] columnNames;
 
     public DynamicStorageHandler(Context context, String tableName, String[] columnNames, String[] columnTypes) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        super(context, Constants.DATABASE_NAME, null, Constants.DATABASE_VERSION);
         this.columnNames = columnNames;
         this.tableName = tableName;
 
@@ -53,12 +51,6 @@ public class DynamicStorageHandler extends SQLiteOpenHelper implements iDatabase
         database.execSQL(sql);
     }
 
-    @Override
-    public boolean store(SensorReading reading) {
-        // TODO remove
-        return false;
-    }
-
     public void store(HashMap<String, Object> hash){
 
         ContentValues insertList = new ContentValues();
@@ -70,16 +62,20 @@ public class DynamicStorageHandler extends SQLiteOpenHelper implements iDatabase
                     insertList.put(name, (String)hash.get(name));
 
 
-                else if (val.getClass().equals(Integer.class))
+                else if (val instanceof Integer)
                     insertList.put(name, (Integer)hash.get(name));
 
 
-                else if (val.getClass().equals(Double.class))
+                else if (val instanceof Double)
                     insertList.put(name, (Double)hash.get(name));
 
 
-                else if (val.getClass().equals(Float.class))
+                else if (val instanceof Float)
                     insertList.put(name, (Float)hash.get(name));
+
+
+                else if (val instanceof Long)
+                    insertList.put(name, (Long)hash.get(name));
 
             }
             else {
@@ -88,61 +84,10 @@ public class DynamicStorageHandler extends SQLiteOpenHelper implements iDatabase
         }
         SQLiteDatabase db = this.getWritableDatabase();
         db.insert(this.tableName, null, insertList);
-    }
-
-    @Override
-    public ArrayList<Object[]> getAll(String tableName) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        String query = "SELECT  * FROM " + this.tableName;
-        return getQuery(query);
-    }
-
-    public ArrayList<Object[]> getQuery(String query) {
-
-        // 1. build the query
-        // done
-
-        // 2. get reference to writable DB
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-
-        int nColumns = cursor.getColumnCount();
-        String[] columnNames = cursor.getColumnNames();
-        ArrayList<Object[]> returnList = new ArrayList<>();
-
-        // 3. go over each row, build sensor value and add it to list
-        List<String> list = Arrays.asList(this.columnNames);
-        if (cursor.moveToFirst()) {
-            do {
-                Object[] values = new Object[nColumns];
-                for ( int i = 0; i < nColumns; i++ ) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                        switch (cursor.getType(i)) {
-                            case Constants.FIELD_TYPE_INTEGER:
-                                values[i] = cursor.getInt(i);
-                                break;
-
-                            case Constants.FIELD_TYPE_FLOAT:
-                                values[i] = cursor.getFloat(i);
-                                break;
-
-                            case Constants.FIELD_TYPE_STRING:
-                                values[i] = cursor.getString(i);
-                                break;
-
-                            default:
-                                values[i] = null;
-                        }
-                    }
-                }
-
-                returnList.add(values);
-                Log.d(LOG_TAG, Arrays.toString( values ));
-            } while (cursor.moveToNext());
-        }
         db.close();
-        return returnList;
     }
+
+
 
     /*public HashMap<String, Object> getAll(){
 

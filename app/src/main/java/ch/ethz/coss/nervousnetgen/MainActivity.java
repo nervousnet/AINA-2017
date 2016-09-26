@@ -11,21 +11,27 @@ import android.widget.Button;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import ch.ethz.coss.nervousnetgen.configurations.ConfigurationClass;
 import ch.ethz.coss.nervousnetgen.configurations.ConfigurationLoader;
 import ch.ethz.coss.nervousnetgen.sensor_wrappers.Wrapper_v2;
 import ch.ethz.coss.nervousnetgen.sensor_wrappers.iWrapper;
+import ch.ethz.coss.nervousnetgen.storage.Query;
 
 public class MainActivity extends AppCompatActivity {
 
     private ArrayList<ConfigurationClass> confClassList;
     //private DatabaseHelper databaseHelper;
-    private ArrayList<iWrapper> wrappers;
+    private ArrayList<iWrapper> wrappers = new ArrayList<>();
+    private ArrayList<String> sensorNames = new ArrayList<>();
     Button startButton;
     Button stopButton;
     Button allButton;
     Button commonButton;
+
+    Query query;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,8 +77,14 @@ public class MainActivity extends AppCompatActivity {
                 /*for ( ConfigurationClass cc : confClassList) {
                     databaseHelper.printTable(cc.getSensorName());
                 }*/
-                for ( iWrapper wrapper : wrappers )
-                    wrapper.getAll();
+
+                for ( String name : sensorNames ) {
+                    Object[] result = query.getQuery("SELECT * FROM " + name + ";");
+                    Log.d("MAIN", Arrays.toString((String[])result[0]));
+                    Object[] values = ((ArrayList<Object[]>)result[1]).get(0);
+                    for (int i = 0; i < values.length; i++)
+                        Log.d("MAIN", "" + values[i]);
+                }
             }
         });
 
@@ -82,8 +94,7 @@ public class MainActivity extends AppCompatActivity {
         ConfigurationLoader confLoader = new ConfigurationLoader(this);
         confClassList = confLoader.load();
         //databaseHelper = new DatabaseHelper(this);
-        wrappers = new ArrayList<>();
-
+        this.query = new Query(this);
 
         //databaseHelper.deleteTable(sensorName);
 
@@ -106,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
                             cc.getAndroidSensorType(), cc.getSamplingPeriod(),
                             cc.getAndroidParametersPositions());
                     wrappers.add(wrapper);
+                    sensorNames.add(cc.getSensorName());
                     break;
                 default:
                     // do nothing, ignore
