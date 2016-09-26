@@ -60,7 +60,7 @@ public class Wrapper1 implements SensorEventListener {
     }
 
     public boolean stop() {
-        Log.d(LOG_TAG, "Register sensor ...");
+        Log.d(LOG_TAG, "Unregister sensor ...");
         mSensorManager.unregisterListener(this, this.sensor);
         return true;
     }

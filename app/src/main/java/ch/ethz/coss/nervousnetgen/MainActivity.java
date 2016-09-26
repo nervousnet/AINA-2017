@@ -22,8 +22,10 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<ConfigurationClass> confClassList;
     private DatabaseHelper databaseHelper;
     private ArrayList<Wrapper1> wrapers;
+    Button startButton;
     Button stopButton;
     Button allButton;
+    Button commonButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
                 // Perform action on click
                 Log.d("MAIN", "Button clicked");
                 for ( ConfigurationClass cc : confClassList) {
-                    databaseHelper.getAll(cc.getSensorName());
+                    databaseHelper.printTable(cc.getSensorName());
                 }
             }
         });
@@ -50,6 +52,28 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        startButton = (Button) findViewById(R.id.buttonStart);
+        startButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+                Log.d("MAIN", "Button clicked");
+                for ( Wrapper1 wrapper : wrapers) {
+                    wrapper.start();
+                }
+                Log.d("MAIN", "Sensors all up");
+            }
+        });
+
+        commonButton = (Button) findViewById(R.id.buttonCommonTable);
+        commonButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+                Log.d("MAIN", "Button clicked");
+                databaseHelper.printTable("CommonTable");
+            }
+        });
+
 
         Log.d("MAIN", "Buttons initialized");
 
@@ -66,13 +90,29 @@ public class MainActivity extends AppCompatActivity {
                     cc.getParametersNames(), cc.getParametersTypes(), cc.getMetadata(),
                     cc.getAndroidSensorType(), cc.getSamplingPeriod(),
                     cc.getAndroidParametersPositions());
-            readSensor1.start();
+            //readSensor1.start();
             wrapers.add(readSensor1);
             Log.d("MAIN", cc.getSensorName() + " DONE");
         }
 
         Log.d("MAIN", "Sensors all up");
 
+        // TESTING
+        Test.queryCommonTable(this);
 
+
+    }
+
+
+    public ArrayList<ConfigurationClass> getConfClassList() {
+        return confClassList;
+    }
+
+    public DatabaseHelper getDatabaseHelper() {
+        return databaseHelper;
+    }
+
+    public ArrayList<Wrapper1> getWrapers() {
+        return wrapers;
     }
 }

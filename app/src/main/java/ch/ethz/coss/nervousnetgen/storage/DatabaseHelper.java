@@ -30,7 +30,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements iDatabaseHelper{
     private static final String paramTypes = "ParametersTypes";
     private static final String values = "Values_";
     private static final String metadata = "Metadata";
-    private static final String[] columnNames = new String[]{ID, sensorName, timestampEpoch, paramNames, paramTypes, values, metadata};
+    private static final String[] columnNames = new String[]{ID, sensorName, timestampEpoch, paramNames, paramTypes, metadata, values};
     private static final String[] columnTypes = new String[]{"INTEGER PRIMARY KEY AUTOINCREMENT","TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
 
 
@@ -58,16 +58,35 @@ public class DatabaseHelper extends SQLiteOpenHelper implements iDatabaseHelper{
         insertList.put(this.metadata,   joinStringsWithComma(reading.getMetadata()));
 
         database.insert(tableName, null, insertList);
+
+
+        // ADD TO COMMON TABLE
+        String commonTable = "CommonTable";
+        createTableIfNotExists(database, commonTable, this.columnNames, this.columnTypes);
+        database.insert(commonTable, null, insertList);
+
         database.close();
 
         return true;
     }
 
-    public ArrayList<SensorReading> getAll(String tableName) {
+
+
+    public ArrayList<SensorReading> printTable(String tableName) {
         ArrayList<SensorReading> readings = new ArrayList();
 
         // 1. build the query
         String query = "SELECT  * FROM " + tableName;
+
+        return getQuery(query);
+    }
+
+
+    public ArrayList<SensorReading> getQuery(String query) {
+        ArrayList<SensorReading> readings = new ArrayList();
+
+        // 1. build the query
+        // done
 
         // 2. get reference to writable DB
         SQLiteDatabase db = this.getWritableDatabase();
@@ -144,32 +163,8 @@ public class DatabaseHelper extends SQLiteOpenHelper implements iDatabaseHelper{
     }
 
 
-    private String[] convertTypesToDBTypes(String[] columnTypes){
-        String[] dbTypes = new String[columnTypes.length];
-        for (int i = 0; i < columnTypes.length; i++){
-            String type = columnTypes[i];
-            switch (type){
-                case "int":
-                    dbTypes[i] = "INTEGER";
-                    break;
 
-                case "double":
-                    dbTypes[i] = "REAL";
-                    break;
-
-                case "String":
-                    dbTypes[i] = "TEXT";
-                    break;
-
-                case "null":
-                    dbTypes[i] = "NULL";
-                    break;
-
-                default:
-                    dbTypes[i] = "BLOB";
-                    // TODO ERROR type not supported
-            }
-        }
-        return dbTypes;
+    public static String getSensorName() {
+        return sensorName;
     }
 }
