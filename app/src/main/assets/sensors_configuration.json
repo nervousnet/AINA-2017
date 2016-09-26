@@ -1,6 +1,6 @@
 {  "sensors_configurations" : [
   {
-    "sensorName" : "Light",
+    "sensorName" : "Light_v2",
     "androidSensorType" : 5,
     "parametersNames" : [
       "Lux"
@@ -15,7 +15,7 @@
     "samplingPeriod" : 0
   },
   {
-      "sensorName" : "Accelerometer",
+      "sensorName" : "Accelerometer_v2",
       "androidSensorType" : 1,
       "parametersNames" : [
         "accX",

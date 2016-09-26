@@ -1,5 +1,8 @@
 package ch.ethz.coss.nervousnetgen.storage;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import ch.ethz.coss.nervousnetgen.SensorReading;
 
 /**
@@ -7,4 +10,6 @@ import ch.ethz.coss.nervousnetgen.SensorReading;
  */
 public interface iDatabaseHelper {
     public boolean store(SensorReading reading);
+    public void store(HashMap<String, Object> sample);
+    public ArrayList<Object[]> getAll(String tableName);
 }

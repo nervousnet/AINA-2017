@@ -14,14 +14,14 @@ import java.util.ArrayList;
 
 import ch.ethz.coss.nervousnetgen.configurations.ConfigurationClass;
 import ch.ethz.coss.nervousnetgen.configurations.ConfigurationLoader;
-import ch.ethz.coss.nervousnetgen.sensor_wrappers.Wrapper1;
-import ch.ethz.coss.nervousnetgen.storage.DatabaseHelper;
+import ch.ethz.coss.nervousnetgen.sensor_wrappers.Wrapper_v2;
+import ch.ethz.coss.nervousnetgen.sensor_wrappers.iWrapper;
 
 public class MainActivity extends AppCompatActivity {
 
     private ArrayList<ConfigurationClass> confClassList;
-    private DatabaseHelper databaseHelper;
-    private ArrayList<Wrapper1> wrapers;
+    //private DatabaseHelper databaseHelper;
+    private ArrayList<iWrapper> wrappers;
     Button startButton;
     Button stopButton;
     Button allButton;
@@ -31,13 +31,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);// Initialize button for get All sensor data
-        allButton = (Button) findViewById(R.id.getAllButton);
-        allButton.setOnClickListener(new View.OnClickListener() {
+
+        startButton = (Button) findViewById(R.id.buttonStart);
+        startButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Perform action on click
-                Log.d("MAIN", "Button clicked");
-                for ( ConfigurationClass cc : confClassList) {
-                    databaseHelper.printTable(cc.getSensorName());
+                Log.d("MAIN", "Start button clicked");
+                for ( iWrapper wrapper : wrappers) {
+                    wrapper.start();
                 }
             }
         });
@@ -46,22 +47,10 @@ public class MainActivity extends AppCompatActivity {
         stopButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Perform action on click
-                Log.d("MAIN", "Button clicked");
-                for ( Wrapper1 w : wrapers ){
-                    w.stop();
+                Log.d("MAIN", "Stop button clicked");
+                for ( iWrapper wrapper : wrappers ){
+                    wrapper.stop();
                 }
-            }
-        });
-
-        startButton = (Button) findViewById(R.id.buttonStart);
-        startButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Perform action on click
-                Log.d("MAIN", "Button clicked");
-                for ( Wrapper1 wrapper : wrapers) {
-                    wrapper.start();
-                }
-                Log.d("MAIN", "Sensors all up");
             }
         });
 
@@ -69,8 +58,21 @@ public class MainActivity extends AppCompatActivity {
         commonButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Perform action on click
-                Log.d("MAIN", "Button clicked");
-                databaseHelper.printTable("CommonTable");
+                Log.d("MAIN", "Common button clicked");
+                //databaseHelper.printTable("CommonTable");
+            }
+        });
+
+        allButton = (Button) findViewById(R.id.getAllButton);
+        allButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+                Log.d("MAIN", "All button clicked");
+                /*for ( ConfigurationClass cc : confClassList) {
+                    databaseHelper.printTable(cc.getSensorName());
+                }*/
+                for ( iWrapper wrapper : wrappers )
+                    wrapper.getAll();
             }
         });
 
@@ -79,28 +81,41 @@ public class MainActivity extends AppCompatActivity {
 
         ConfigurationLoader confLoader = new ConfigurationLoader(this);
         confClassList = confLoader.load();
-        databaseHelper = new DatabaseHelper(this);
-        wrapers = new ArrayList<>();
+        //databaseHelper = new DatabaseHelper(this);
+        wrappers = new ArrayList<>();
 
 
         //databaseHelper.deleteTable(sensorName);
 
         for ( ConfigurationClass cc : confClassList) {
-            Wrapper1 readSensor1 = new Wrapper1(this, databaseHelper, cc.getSensorName(),
-                    cc.getParametersNames(), cc.getParametersTypes(), cc.getMetadata(),
-                    cc.getAndroidSensorType(), cc.getSamplingPeriod(),
-                    cc.getAndroidParametersPositions());
-            //readSensor1.start();
-            wrapers.add(readSensor1);
+
+            // TODO: select right Wrapper
+            String chooseWrapper = "Wrapper_v2";
+            iWrapper wrapper;
+            switch (chooseWrapper){
+                case "Wrapper1":
+                   /* wrapper = new Wrapper1(this, databaseHelper, cc.getSensorName(),
+                            cc.getParametersNames(), cc.getParametersTypes(), cc.getMetadata(),
+                            cc.getAndroidSensorType(), cc.getSamplingPeriod(),
+                            cc.getAndroidParametersPositions());
+                    wrappers.add(wrapper);*/
+                    break;
+                case "Wrapper_v2":
+                    wrapper = new Wrapper_v2(this, cc.getSensorName(),
+                            cc.getParametersNames(), cc.getParametersTypes(), cc.getMetadata(),
+                            cc.getAndroidSensorType(), cc.getSamplingPeriod(),
+                            cc.getAndroidParametersPositions());
+                    wrappers.add(wrapper);
+                    break;
+                default:
+                    // do nothing, ignore
+                    Log.d("MAIN", "ERROR - wrapper not supported in main activity class");
+            }
             Log.d("MAIN", cc.getSensorName() + " DONE");
         }
 
-        Log.d("MAIN", "Sensors all up");
-
         // TESTING
-        Test.queryCommonTable(this);
-
-
+        //Test.queryCommonTable(this);
     }
 
 
@@ -108,11 +123,8 @@ public class MainActivity extends AppCompatActivity {
         return confClassList;
     }
 
-    public DatabaseHelper getDatabaseHelper() {
-        return databaseHelper;
-    }
 
-    public ArrayList<Wrapper1> getWrapers() {
-        return wrapers;
+    public ArrayList<iWrapper> getWrapers() {
+        return wrappers;
     }
 }

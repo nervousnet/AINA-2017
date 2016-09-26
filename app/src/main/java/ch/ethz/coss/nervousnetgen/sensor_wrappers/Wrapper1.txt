@@ -13,7 +13,7 @@ import ch.ethz.coss.nervousnetgen.storage.iDatabaseHelper;
 /**
  * Created by ales on 20/09/16.
  */
-public class Wrapper1 implements SensorEventListener {
+public class Wrapper1 implements iWrapper {
 
     private static final String LOG_TAG = Wrapper1.class.getSimpleName();
 

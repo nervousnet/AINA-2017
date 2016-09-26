@@ -9,6 +9,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import ch.ethz.coss.nervousnetgen.SensorReading;
@@ -70,6 +71,10 @@ public class DatabaseHelper extends SQLiteOpenHelper implements iDatabaseHelper{
         return true;
     }
 
+    @Override
+    public void store(HashMap<String, Object> sample) {
+        //TODO
+    }
 
 
     public ArrayList<SensorReading> printTable(String tableName) {
