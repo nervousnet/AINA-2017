@@ -1,15 +1,15 @@
-package ch.ethz.coss.nervousnetgen.storage;
+package ch.ethz.coss.nervousnetgen.database;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
-import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
+import ch.ethz.coss.nervousnetgen.sensor.SensorReading;
+import ch.ethz.coss.nervousnetgen.sensor.SensorReading_v2;
 
 /**
  * Created by ales on 26/09/16.
@@ -69,6 +69,9 @@ Returns [0] a string array of column names and [1] an array of arrays of values
         db.close();
         return new Object[]{ columnNames, returnList };
     }
+
+
+
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {

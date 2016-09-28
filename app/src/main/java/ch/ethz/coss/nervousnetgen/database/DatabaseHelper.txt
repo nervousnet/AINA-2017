@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import ch.ethz.coss.nervousnetgen.SensorReading;
+import ch.ethz.coss.nervousnetgen.sensor.SensorReading;
 
 /**
  * Created by ales on 21/09/16.

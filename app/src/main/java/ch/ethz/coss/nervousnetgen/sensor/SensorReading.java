@@ -1,22 +1,24 @@
-package ch.ethz.coss.nervousnetgen;
+package ch.ethz.coss.nervousnetgen.sensor;
 
 import java.util.Arrays;
 
 /**
  * Created by ales on 20/09/16.
  */
-public class SensorReading_v2 {
+public class SensorReading {
 
     private String sensorName;
     private String timestampEpoch;
     private String[] parametersNames;
-    private Object[] values;
+    private String[] typeNames;
+    private String[] values;
     private String[] metadata;
 
-    public SensorReading_v2(String sensorName, String timestampEpoch, String[] parametersNames, String[] values, String[] metadata){
+    public SensorReading(String sensorName, String timestampEpoch, String[] parametersNames, String[] typeNames, String[] values, String[] metadata){
         this.sensorName = sensorName;
         this.timestampEpoch = timestampEpoch;
         this.parametersNames = parametersNames;
+        this.typeNames = typeNames;
         this.values = values;
         this.metadata = metadata;
     }
@@ -37,7 +39,15 @@ public class SensorReading_v2 {
         this.sensorName = sensorName;
     }
 
-    public Object[] getValues() {
+    public String[] getTypeNames() {
+        return typeNames;
+    }
+
+    public void setTypeNames(String[] typeNames) {
+        this.typeNames = typeNames;
+    }
+
+    public String[] getValues() {
         return values;
     }
 
@@ -67,6 +77,7 @@ public class SensorReading_v2 {
                 "sensorName='" + sensorName + '\'' +
                 ", timestampEpoch='" + timestampEpoch + '\'' +
                 ", parametersNames=" + Arrays.toString(parametersNames) +
+                ", typeNames=" + Arrays.toString(typeNames) +
                 ", values=" + Arrays.toString(values) +
                 ", metadata=" + Arrays.toString(metadata) +
                 '}';

@@ -1,4 +1,4 @@
-package ch.ethz.coss.nervousnetgen.storage;
+package ch.ethz.coss.nervousnetgen.database;
 
 /**
  * Created by ales on 26/09/16.
@@ -14,4 +14,5 @@ public class Constants {
     public static final String DATABASE_NAME = "VirtualSensorDB";
     public static final int DATABASE_VERSION = 1;
 
+    public static final String TIMESTAMP = "timestamp";
 }

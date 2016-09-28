@@ -1,8 +1,6 @@
 package ch.ethz.coss.nervousnetgen;
 
 import android.content.Context;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,26 +10,28 @@ import android.widget.Button;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import ch.ethz.coss.nervousnetgen.configurations.ConfigurationClass;
 import ch.ethz.coss.nervousnetgen.configurations.ConfigurationLoader;
+import ch.ethz.coss.nervousnetgen.database.QueryRich;
+import ch.ethz.coss.nervousnetgen.sensor.SensorReading;
+import ch.ethz.coss.nervousnetgen.sensor.SensorReading_v3;
 import ch.ethz.coss.nervousnetgen.sensor_wrappers.Wrapper_v2;
+import ch.ethz.coss.nervousnetgen.sensor_wrappers.Wrapper_v3;
 import ch.ethz.coss.nervousnetgen.sensor_wrappers.iWrapper;
-import ch.ethz.coss.nervousnetgen.storage.Query;
+import ch.ethz.coss.nervousnetgen.database.Query;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ArrayList<ConfigurationClass> confClassList;
+    //private ArrayList<ConfigurationClass> confClassList;
     //private DatabaseHelper databaseHelper;
     private ArrayList<iWrapper> wrappers = new ArrayList<>();
-    private ArrayList<String> sensorNames = new ArrayList<>();
+    private HashMap<String, ConfigurationClass> sensors = new HashMap<>();
     Button startButton;
     Button stopButton;
     Button allButton;
     Button commonButton;
-
-    Query query;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,39 +70,22 @@ public class MainActivity extends AppCompatActivity {
         });
 
         allButton = (Button) findViewById(R.id.getAllButton);
-        allButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Perform action on click
-                Log.d("MAIN", "All button clicked");
-                /*for ( ConfigurationClass cc : confClassList) {
-                    databaseHelper.printTable(cc.getSensorName());
-                }*/
-
-                for ( String name : sensorNames ) {
-                    Object[] result = query.getQuery("SELECT * FROM " + name + ";");
-                    Log.d("MAIN", Arrays.toString((String[])result[0]));
-                    Object[] values = ((ArrayList<Object[]>)result[1]).get(0);
-                    for (int i = 0; i < values.length; i++)
-                        Log.d("MAIN", "" + values[i]);
-                }
-            }
-        });
+        initGetAll(this);
 
 
         Log.d("MAIN", "Buttons initialized");
 
         ConfigurationLoader confLoader = new ConfigurationLoader(this);
-        confClassList = confLoader.load();
+        ArrayList<ConfigurationClass> confClassList = confLoader.load();
         //databaseHelper = new DatabaseHelper(this);
-        this.query = new Query(this);
 
         //databaseHelper.deleteTable(sensorName);
 
         for ( ConfigurationClass cc : confClassList) {
 
             // TODO: select right Wrapper
-            String chooseWrapper = "Wrapper_v2";
-            iWrapper wrapper;
+            String chooseWrapper = "Wrapper_v3";
+            iWrapper wrapper = null;
             switch (chooseWrapper){
                 case "Wrapper1":
                    /* wrapper = new Wrapper1(this, databaseHelper, cc.getSensorName(),
@@ -116,13 +99,16 @@ public class MainActivity extends AppCompatActivity {
                             cc.getParametersNames(), cc.getParametersTypes(), cc.getMetadata(),
                             cc.getAndroidSensorType(), cc.getSamplingPeriod(),
                             cc.getAndroidParametersPositions());
-                    wrappers.add(wrapper);
-                    sensorNames.add(cc.getSensorName());
                     break;
+
+                case "Wrapper_v3":
+                    wrapper = new Wrapper_v3(this, cc);
                 default:
                     // do nothing, ignore
                     Log.d("MAIN", "ERROR - wrapper not supported in main activity class");
             }
+            wrappers.add(wrapper);
+            sensors.put(cc.getSensorName(), cc);
             Log.d("MAIN", cc.getSensorName() + " DONE");
         }
 
@@ -131,12 +117,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public ArrayList<ConfigurationClass> getConfClassList() {
-        return confClassList;
+    private void initGetAll(final Context context){
+        allButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+                Log.d("MAIN", "All button clicked");
+                /*for ( ConfigurationClass cc : confClassList) {
+                    databaseHelper.printTable(cc.getSensorName());
+                }*/
+                QueryRich query = new QueryRich(context);
+                for ( String sensorName : sensors.keySet() ) {
+                    ArrayList<SensorReading_v3> result = query.getAll(sensors.get(sensorName));
+                    Log.d("GET ALL", result.toString());
+                }
+            }
+        });
     }
 
-
-    public ArrayList<iWrapper> getWrapers() {
-        return wrappers;
-    }
 }

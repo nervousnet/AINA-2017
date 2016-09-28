@@ -10,6 +10,7 @@ import android.util.Log;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import ch.ethz.coss.nervousnetgen.configurations.ConfigurationClass;
 import ch.ethz.coss.nervousnetgen.database.Constants;
 import ch.ethz.coss.nervousnetgen.database.Store;
 import ch.ethz.coss.nervousnetgen.database.iStore;
@@ -17,9 +18,9 @@ import ch.ethz.coss.nervousnetgen.database.iStore;
 /**
  * Created by ales on 20/09/16.
  */
-public class Wrapper_v2 implements iWrapper, SensorEventListener {
+public class Wrapper_v3 implements iWrapper, SensorEventListener {
 
-    private static final String LOG_TAG = Wrapper_v2.class.getSimpleName();
+    private static final String LOG_TAG = Wrapper_v3.class.getSimpleName();
 
     private final SensorManager mSensorManager;
     private final Sensor sensor;
@@ -27,7 +28,6 @@ public class Wrapper_v2 implements iWrapper, SensorEventListener {
 
     private final String sensorName;
     private final String[] parametersNames;
-    private final String[] typeNames;
     private final String[] metadata;
     private int samplingPeriod;
     private final int[] parametersPositions;
@@ -37,12 +37,14 @@ public class Wrapper_v2 implements iWrapper, SensorEventListener {
 
 
     // This is actually extraction from config file
-    public Wrapper_v2(Context context, String sensorName, String[] paramNames, String[] typeNames, String[] metadata,
-                      int sensorType, int samplingPeriod, int[] parametersPositions){
+    public Wrapper_v3(Context context, ConfigurationClass config){
 
+        String[] paramNames = config.getParametersNames();
+        String[] typeNames = config.getParametersTypes();
+        int nParam = paramNames.length;
 
-        String[] columnNames = new String[3+paramNames.length];
-        String[] columnTypes = new String[3+paramNames.length];
+        String[] columnNames = new String[3+nParam];
+        String[] columnTypes = new String[3+nParam];
 
         columnNames[0] = "timestamp";
         columnTypes[0] = "BIGINT";
@@ -52,7 +54,7 @@ public class Wrapper_v2 implements iWrapper, SensorEventListener {
 
         columnNames[2] = "samplingPeriod";
         columnTypes[2] = "INT";
-        for (int i = 0; i < paramNames.length; i++){
+        for (int i = 0; i < nParam; i++){
             columnNames[i+3] = paramNames[i];
             switch (typeNames[i]){
                 case "int":
@@ -67,17 +69,17 @@ public class Wrapper_v2 implements iWrapper, SensorEventListener {
         }
 
 
-        this.databaseHandler = new Store(context, sensorName, columnNames, columnTypes);
-
-        this.sensorName = sensorName;
-        this.parametersNames = paramNames;
-        this.typeNames = typeNames;
-        this.metadata = metadata;
-        this.samplingPeriod = samplingPeriod;
-        this.parametersPositions = parametersPositions;
-
+        this.databaseHandler = new Store(context, config.getSensorName(), columnNames, columnTypes);
         this.mSensorManager = (SensorManager)context.getSystemService(context.SENSOR_SERVICE);
-        this.sensor = mSensorManager.getDefaultSensor(sensorType);
+        this.sensor = mSensorManager.getDefaultSensor(config.getAndroidSensorType());
+
+        this.sensorName = config.getSensorName();
+        this.parametersNames = paramNames;
+        this.metadata = config.getMetadata();
+        this.samplingPeriod = config.getSamplingPeriod();
+        this.parametersPositions = config.getAndroidParametersPositions();
+
+
     }
 
     @Override

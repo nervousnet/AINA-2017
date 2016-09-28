@@ -7,8 +7,8 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
 
-import ch.ethz.coss.nervousnetgen.SensorReading;
-import ch.ethz.coss.nervousnetgen.storage.iDatabaseHelper;
+import ch.ethz.coss.nervousnetgen.sensor.SensorReading;
+import ch.ethz.coss.nervousnetgen.storage.iStore;
 
 /**
  * Created by ales on 20/09/16.
