@@ -9,11 +9,68 @@ import ch.ethz.coss.nervousnetgen.sensor.SensorReading;
  */
 public class CombineReadings {
 
-    public static ArrayList<SensorReading> combine(ArrayList<ArrayList<SensorReading>> readings){
+    private static final long initWindowSizeMiliseconds = 1000;
 
-        
+    public static ArrayList<SensorReading> combine(
+            ArrayList<ArrayList<SensorReading>> listOfSensorsReadings, ArrayList<String> paramNames){
 
-        return null;
+        long startTimestamp = Long.MIN_VALUE;
+        long stopTimestamp = Long.MIN_VALUE;
+
+        //1. get the beginning and end point of the frame, used for cuting into intervals
+        for( ArrayList<SensorReading> arr : listOfSensorsReadings ){
+            long tmpStart = arr.get(0).getTimestampEpoch();
+            if (tmpStart > startTimestamp)
+                startTimestamp = tmpStart;
+            long tmpStop = arr.get(arr.size() - 1).getTimestampEpoch();
+            if (tmpStop > stopTimestamp)
+                stopTimestamp = tmpStop;
+        }
+
+        // Let's take interval as 1s:
+        long start = startTimestamp;
+        long step = initWindowSizeMiliseconds;
+
+        // Initialize pointes which will run through all arrays
+        int[] pointers = new int[listOfSensorsReadings.size()];
+        for( int i = 0; i < listOfSensorsReadings.size(); i++ ){
+            pointers[i++] = -1;
+        }
+
+
+        ArrayList<SensorReading> vsparr = new ArrayList<>();
+
+        while ( start <= stopTimestamp ) {
+
+            for (int i = 0; i < pointers.length; i++) {
+                ArrayList<SensorReading> readings = listOfSensorsReadings.get(i);
+                int sizeI = readings.size();
+                while (pointers[i]+1 < sizeI && readings.get(pointers[i]+1).getTimestampEpoch() <= start) {
+                    pointers[i]++;
+                }
+            }
+
+            SensorReading original = new SensorReading();
+
+            // Set timestamp of the combined virtual point
+
+            original.setTimestampEpoch(start);
+            original.setParametersNames(paramNames);
+            Object[] originalValues = original.getValues();
+            // Fill the VirtualSensor
+            int pos = 0;
+            for (int i = 0; i < pointers.length; i++) {
+
+                SensorReading reading = listOfSensorsReadings.get(i).get(pointers[i]);
+                Object[] readingValues = reading.getValues();
+                for( int p = 0; p < readingValues.length; p++){
+                    originalValues[pos++] = readingValues[p];
+                }
+            }
+            vsparr.add(original);
+            start += step;
+        }
+        return vsparr;
     }
 
 }

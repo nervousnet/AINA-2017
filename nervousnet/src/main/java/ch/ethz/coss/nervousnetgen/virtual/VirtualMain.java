@@ -1,6 +1,7 @@
 package ch.ethz.coss.nervousnetgen.virtual;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -9,6 +10,7 @@ import ch.ethz.coss.nervousnetgen.virtual.configuration.SensorConfiguration;
 import ch.ethz.coss.nervousnetgen.virtual.configuration.VirtualConfigurationLoader;
 import ch.ethz.coss.nervousnetgen.virtual.configuration.VirtualSensorConfiguration;
 import ch.ethz.coss.nervousnetgen.database.iDatabaseManager;
+import ch.ethz.coss.nervousnetgen.virtual.data.CombineReadings;
 
 /**
  * Created by ales on 01/10/16.
@@ -46,9 +48,9 @@ public class VirtualMain {
         }
 
         // 3. combine sensor readings
+        ArrayList<SensorReading> virtualPoints = CombineReadings.combine(readings, virtualParamNames);
 
-
-
+        Log.d("MAIN_VIRTUAL", "" + virtualPoints.size());
         // 2. compute initial clusters
 
         // 3. add points to database
