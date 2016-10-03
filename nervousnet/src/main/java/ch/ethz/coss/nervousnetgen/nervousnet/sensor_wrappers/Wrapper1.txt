@@ -1,0 +1,93 @@
+package ch.ethz.coss.nervousnetgen.nervousnet.sensor_wrappers;
+
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.util.Log;
+
+import ch.ethz.coss.nervousnetgen.sensor.SensorReading;
+import ch.ethz.coss.nervousnetgen.storage.iStore;
+
+/**
+ * Created by ales on 20/09/16.
+ */
+public class Wrapper1 implements iWrapper {
+
+    private static final String LOG_TAG = Wrapper1.class.getSimpleName();
+
+    private final SensorManager mSensorManager;
+    private final Sensor sensor;
+    private iDatabaseHelper databaseHelper;
+
+    private final String sensorName;
+    private final String[] parametersNames;
+    private final String[] typeNames;
+    private final String[] metadata;
+    private int samplingPeriod;
+    private final int[] parametersPositions;
+
+
+    /**
+     *
+     * @param context - main activity
+     * @param sensorType - type of the sensor, check android documentation
+     *             https://developer.android.com/reference/android/hardware/SensorManager.html
+     * @param parametersPositions - for light is sensor.values[0], for others check documentation
+     *             https://developer.android.com/reference/android/hardware/SensorEvent.html#values
+     *
+     */
+    public Wrapper1(Context context, iDatabaseHelper databaseHelper, String sensorName, String[] paramNames, String[] typeNames, String[] metadata,
+                    int sensorType, int samplingPeriod, int[] parametersPositions){
+        this.databaseHelper = databaseHelper;
+
+        this.sensorName = sensorName;
+        this.parametersNames = paramNames;
+        this.typeNames = typeNames;
+        this.metadata = metadata;
+
+        this.mSensorManager = (SensorManager)context.getSystemService(context.SENSOR_SERVICE);
+        this.sensor = mSensorManager.getDefaultSensor(sensorType);
+        this.samplingPeriod = samplingPeriod;
+        this.parametersPositions = parametersPositions;
+    }
+
+    public boolean start() {
+        Log.d(LOG_TAG, "Register sensor ...");
+        mSensorManager.registerListener(this, sensor, samplingPeriod);
+        return true;
+    }
+
+    public boolean stop() {
+        Log.d(LOG_TAG, "Unregister sensor ...");
+        mSensorManager.unregisterListener(this, this.sensor);
+        return true;
+    }
+
+
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+        //Log.d(LOG_TAG, "onSenesorChanged activated ...");
+        long timestamp = System.currentTimeMillis();
+        String[] values = new String[parametersPositions.length];
+        for (int i = 0; i < parametersPositions.length; i++) {
+            int pos = parametersPositions[i];
+            values[i] = String.valueOf(sensorEvent.values[pos]);
+        }
+
+        String[] str = new String[]{"", "", "", "", ""};
+        int len = (str.length < values.length) ? str.length : values.length;
+        for ( int i = 0 ; i < len; i ++ )
+            str[i] = values[i];
+        String tmpStr = String.format("%20s %20s %20s %20s", str[0], str[1], str[2], str[3], str[4]);
+        Log.d(LOG_TAG, sensorName + " " + tmpStr);
+        SensorReading reading = new SensorReading(sensorName, String.valueOf(timestamp), parametersNames, typeNames, values, metadata);
+        databaseHelper.store(reading);
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+
+    }
+}

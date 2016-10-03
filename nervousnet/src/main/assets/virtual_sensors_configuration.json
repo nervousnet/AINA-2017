@@ -1,0 +1,19 @@
+{
+  "virtual_sensors" :
+    [
+      {
+        "sensors" : {
+          "Accelerometer_v2" : [
+            "accX",
+            "accY",
+            "accZ"
+          ],
+          "Light_v2" : [
+            "Lux"
+          ]
+        },
+        "periodicWindowSize" : 5000,
+        "virtualSensorName" : "TestVirtulSensor"
+      }
+    ]
+}
