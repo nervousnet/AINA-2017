@@ -1,4 +1,4 @@
-package ch.ethz.coss.nervousnetgen.nervousnet.database;
+package ch.ethz.coss.nervousnetgen.database;
 
 /**
  * Created by ales on 26/09/16.
@@ -15,4 +15,5 @@ public class Constants {
     public static final int DATABASE_VERSION = 1;
 
     public static final String TIMESTAMP = "timestamp";
+    public static final String ID = "ID";
 }

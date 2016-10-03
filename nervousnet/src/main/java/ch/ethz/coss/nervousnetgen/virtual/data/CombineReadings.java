@@ -11,7 +11,7 @@ public class CombineReadings {
 
     public static ArrayList<SensorReading> combine(ArrayList<ArrayList<SensorReading>> readings){
 
-
+        
 
         return null;
     }

@@ -12,7 +12,8 @@
             "Lux"
           ]
         },
-        "periodicWindowSize" : 5000,
+        "samplingRate" : 1000,
+        "slidingWindow" : 1000000,
         "virtualSensorName" : "TestVirtulSensor"
       }
     ]

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import ch.ethz.coss.nervousnetgen.R;
+import ch.ethz.coss.nervousnetgen.database.DatabaseManager;
 import ch.ethz.coss.nervousnetgen.nervousnet.configuration.ConfigurationClass;
 import ch.ethz.coss.nervousnetgen.nervousnet.configuration.ConfigurationLoader;
 import ch.ethz.coss.nervousnetgen.nervousnet.database.QueryRich;
@@ -121,9 +122,9 @@ public class MainActivity extends Activity {
         // VIRTUAL
         /////////////////////////////////////
 
-        VirtualMain vm = new VirtualMain(this.getApplicationContext(), null);
+        VirtualMain vm = new VirtualMain(this.getApplicationContext(), new DatabaseManager(this.getApplicationContext()));
         //TODO for now, run only first virtual sensor
-        //vm.periodic(0);
+        vm.periodic(0);
     }
 
 

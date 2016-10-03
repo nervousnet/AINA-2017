@@ -1,33 +1,49 @@
-package ch.ethz.coss.nervousnetgen.nervousnet.database;
+package ch.ethz.coss.nervousnetgen.database;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
+import android.text.TextUtils;
 
 import java.util.ArrayList;
 
-import ch.ethz.coss.nervousnetgen.database.Constants;
 import ch.ethz.coss.nervousnetgen.sensor.SensorReading;
-import ch.ethz.coss.nervousnetgen.sensor.iSensorReadingConfiguration;
-
 
 /**
- * Created by ales on 27/09/16.
+ * Created by ales on 03/10/16.
  */
-public class QueryRich extends SQLiteOpenHelper {
+public class DatabaseManager extends SQLiteOpenHelper implements iDatabaseManager {
 
-    private static final String LOG_TAG = QueryRich.class.getSimpleName();
-
-    public QueryRich(Context context) {
+    public DatabaseManager(Context context) {
         super(context, Constants.DATABASE_NAME, null, Constants.DATABASE_VERSION);
     }
 
-    public ArrayList<SensorReading> getAll(iSensorReadingConfiguration config) {
+    public ArrayList<SensorReading> getReadings(String sensorName, ArrayList<String> sensorParamNames){
+        String query = "SELECT * FROM " + sensorName;
+        return getReadings(sensorParamNames, query);
+    }
+
+    public ArrayList<SensorReading> getReadings(String sensorName, ArrayList<String> sensorParamNames,
+                                               long start, long stop){
+        String query = "SELECT * FROM " + sensorName + " WHERE " + Constants.TIMESTAMP + " >= " + start + " AND " + Constants.TIMESTAMP + " <= " + stop + ";";
+        return getReadings(sensorParamNames, query);
+    }
+
+    public ArrayList<SensorReading> getReadings(String sensorName, ArrayList<String> sensorParamNames,
+                                               long start, long stop, ArrayList<String> selectColumns){
+        String cols = TextUtils.join(", ", selectColumns);
+        String query = "SELECT " + Constants.ID + ", " + Constants.TIMESTAMP + ", " + cols + " " +
+                "FROM " + sensorName + " WHERE " + Constants.TIMESTAMP + " >= " + start + " AND " +
+                "" + Constants.TIMESTAMP + " <= " + stop + ";";
+        return getReadings(sensorParamNames, query);
+    }
+
+    public ArrayList<SensorReading> getReadings(ArrayList<String> sensorParamNames,
+                                           String query) {
 
         // 1. create the query
-        String query = "SELECT * FROM " + config.getSensorName();
 
         // 2. get reference to writable DB
         SQLiteDatabase db = this.getWritableDatabase();
@@ -41,13 +57,14 @@ public class QueryRich extends SQLiteOpenHelper {
         // 3. go over each row, build sensor value and add it to list
         if (cursor.moveToFirst()) {
             do {
-                SensorReading reading = new SensorReading(config);
+                SensorReading reading = new SensorReading();
 
                 // Update timestamp and values
                 int indexTimestamp = cursor.getColumnIndex(Constants.TIMESTAMP);
                 reading.setTimestampEpoch(cursor.getLong(indexTimestamp));
+                reading.setParametersNames(sensorParamNames);
 
-                for (String columnName : config.getParametersNames()){
+                for (String columnName : sensorParamNames){
                     int indexParam = cursor.getColumnIndex(columnName);
                     Object value = null;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -79,6 +96,9 @@ public class QueryRich extends SQLiteOpenHelper {
         db.close();
         return returnList;
     }
+
+
+
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {

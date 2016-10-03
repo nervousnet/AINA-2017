@@ -76,17 +76,18 @@ public class VirtualConfigurationLoader {
                     sensorList.add(sensor);
                 }
 
-                long periodicWindowSize = virtSensorConf.getLong("periodicWindowSize");
+                long samplingRate = virtSensorConf.getLong("samplingRate");
+                long slidingWindow = virtSensorConf.getLong("slidingWindow");
 
                 VirtualSensorConfiguration vs;
                 if (virtSensorConf.has("virtualSensorName")) {
                     String virtualSensorName = virtSensorConf.getString("virtualSensorName");
                     vs = new VirtualSensorConfiguration(sensorList,
-                            periodicWindowSize, virtualSensorName);
+                            samplingRate, slidingWindow ,virtualSensorName);
                 }
                 else {
                     vs = new VirtualSensorConfiguration(sensorList,
-                            periodicWindowSize);
+                            samplingRate, slidingWindow);
                 }
 
 

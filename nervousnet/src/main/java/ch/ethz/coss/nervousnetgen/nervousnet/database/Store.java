@@ -8,6 +8,8 @@ import android.util.Log;
 
 import java.util.HashMap;
 
+import ch.ethz.coss.nervousnetgen.database.Constants;
+
 /**
  * Created by ales on 26/09/16.
  */
@@ -16,7 +18,6 @@ public class Store extends SQLiteOpenHelper implements iStore {
     private static final String LOG_TAG = Store.class.getSimpleName();
 
     private String tableName;
-    private static final String ID = "ID";
     private String[] columnNames;
 
     public Store(Context context, String tableName, String[] columnNames, String[] columnTypes) {
@@ -34,7 +35,7 @@ public class Store extends SQLiteOpenHelper implements iStore {
                                                   String[] columnNames, String[] columnTypes){
         Log.d(LOG_TAG, "Create table " + tableName);
         String sql = "CREATE TABLE IF NOT EXISTS " + tableName + " ( " +
-                "ID INTEGER PRIMARY KEY AUTOINCREMENT";
+                Constants.ID + " INTEGER PRIMARY KEY AUTOINCREMENT";
 
         for (int i = 0; i < columnNames.length; i++){
             sql += ", " + columnNames[i] + " " + columnTypes[i];

@@ -1,5 +1,6 @@
 package ch.ethz.coss.nervousnetgen.sensor;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,18 +11,17 @@ public class SensorReading {
 
     protected String sensorName;
     private long timestampEpoch;
-
     protected List<String> parametersNames;
     private Object[] values;
 
     protected String[] metadata;
-    protected int samplingPeriod;
+
+    public SensorReading(){};
 
     public SensorReading(iSensorReadingConfiguration config){
         this.sensorName = config.getSensorName();
         this.parametersNames = Arrays.asList( config.getParametersNames() );
         this.metadata = config.getMetadata();
-        this.samplingPeriod = config.getSamplingPeriod();
         this.values = new Object[this.parametersNames.size()];
     }
 
@@ -45,10 +45,6 @@ public class SensorReading {
         return metadata;
     }
 
-    public int getSamplingPeriod() {
-        return samplingPeriod;
-    }
-
     public void setValue(String paramName, Object value){
         int index = this.parametersNames.indexOf(paramName);
         this.values[index] = value;
@@ -58,13 +54,17 @@ public class SensorReading {
         this.timestampEpoch = timestamp;
     }
 
+    public void setParametersNames(ArrayList<String> paramNames){
+        this.parametersNames = paramNames;
+        if (values == null || values.length != paramNames.size())
+            this.values = new Object[this.parametersNames.size()];
+    }
     @Override
     public String toString() {
-        return "SensorReading_v3{" +
+        return "SensorReading{" +
                 "sensorName='" + sensorName + '\'' +
                 ", parametersNames size=" + parametersNames.size() +
                 ", metadata=" + Arrays.toString(metadata) +
-                ", samplingPeriod=" + samplingPeriod +
                 ", timestampEpoch=" + timestampEpoch +
                 ", values=" + Arrays.toString(values) +
                 '}';

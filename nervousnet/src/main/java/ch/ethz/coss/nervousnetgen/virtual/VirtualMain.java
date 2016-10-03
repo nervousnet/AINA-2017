@@ -8,7 +8,7 @@ import ch.ethz.coss.nervousnetgen.sensor.SensorReading;
 import ch.ethz.coss.nervousnetgen.virtual.configuration.SensorConfiguration;
 import ch.ethz.coss.nervousnetgen.virtual.configuration.VirtualConfigurationLoader;
 import ch.ethz.coss.nervousnetgen.virtual.configuration.VirtualSensorConfiguration;
-import ch.ethz.coss.nervousnetgen.sensor.iDataManager;
+import ch.ethz.coss.nervousnetgen.database.iDatabaseManager;
 
 /**
  * Created by ales on 01/10/16.
@@ -16,9 +16,9 @@ import ch.ethz.coss.nervousnetgen.sensor.iDataManager;
 public class VirtualMain {
 
     private ArrayList<VirtualSensorConfiguration> virtualSensorConfigurations;
-    private iDataManager dataManager;
+    private iDatabaseManager dataManager;
 
-    public VirtualMain(Context context, iDataManager dataManager) {
+    public VirtualMain(Context context, iDatabaseManager dataManager) {
         this.virtualSensorConfigurations = VirtualConfigurationLoader.load(context);
         this.dataManager = dataManager;
     }
@@ -29,7 +29,7 @@ public class VirtualMain {
 
         // 1. get initial sensor data
         long stop = System.currentTimeMillis();
-        long start = stop - virtualSensorConf.getPeriodicWindowSize();
+        long start = stop - virtualSensorConf.getSlidingWindow();
 
         // 2. get readings for all sensors
         ArrayList<ArrayList<SensorReading>> readings = new ArrayList<>();   // data
@@ -37,11 +37,15 @@ public class VirtualMain {
 
         for (SensorConfiguration sensor : virtualSensorConf.getSensors()){
             String sensorID = sensor.getNameID();
-            ArrayList<SensorReading> sensorReadings = dataManager.getReadings(sensorID, start, stop,
-                    sensor.getParamNames());
+            //ArrayList<SensorReading> sensorReadings = dataManager.getReadings(sensorID, sensor.getParamNames(), start, stop,
+            //        sensor.getParamNames());
+            // TODO change from all to RANGE
+            ArrayList<SensorReading> sensorReadings = dataManager.getReadings(sensorID, sensor.getParamNames());
             readings.add(sensorReadings);
             virtualParamNames.addAll(sensor.getParamNames());
         }
+
+        // 3. combine sensor readings
 
 
 

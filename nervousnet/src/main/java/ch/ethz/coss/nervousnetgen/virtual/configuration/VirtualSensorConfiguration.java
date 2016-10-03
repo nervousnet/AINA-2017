@@ -8,28 +8,38 @@ import java.util.ArrayList;
 public class VirtualSensorConfiguration {
 
     private ArrayList<SensorConfiguration> sensors;
-    private long periodicWindowSize; // miliseconds
+    private long samplingRate; // miliseconds
+    private long slidingWindow; //miliseconds
     private String virtualSensorName;
 
     private int numClusters = 5;
 
-    public VirtualSensorConfiguration(ArrayList<SensorConfiguration> sensors, long periodicWindowSize) {
+    public VirtualSensorConfiguration(ArrayList<SensorConfiguration> sensors, long samplingPeriod,
+                                      long slidingWindow) {
         this.sensors = sensors;
-        this.periodicWindowSize = periodicWindowSize;
+        this.samplingRate = samplingPeriod;
+        this.slidingWindow = slidingWindow;
     }
 
-    public VirtualSensorConfiguration(ArrayList<SensorConfiguration> sensors, long periodicWindowSize, String virtualSensorName) {
+    public VirtualSensorConfiguration(ArrayList<SensorConfiguration> sensors, long samplingPeriod,
+                                      long slidingWindow, String virtualSensorName) {
         this.sensors = sensors;
-        this.periodicWindowSize = periodicWindowSize;
+        this.samplingRate = samplingPeriod;
+        this.slidingWindow = slidingWindow;
         this.virtualSensorName = virtualSensorName;
     }
+
 
     public ArrayList<SensorConfiguration> getSensors() {
         return sensors;
     }
 
-    public long getPeriodicWindowSize() {
-        return periodicWindowSize;
+    public long getSamplingRate() {
+        return samplingRate;
+    }
+
+    public long getSlidingWindow() {
+        return slidingWindow;
     }
 
     public String getVirtualSensorName() {
@@ -38,15 +48,5 @@ public class VirtualSensorConfiguration {
 
     public int getNumClusters() {
         return numClusters;
-    }
-
-    @Override
-    public String toString() {
-        return "VirtualSensorConfiguration{" +
-                "sensors=" + sensors +
-                ", periodicWindowSize=" + periodicWindowSize +
-                ", virtualSensorName='" + virtualSensorName + '\'' +
-                ", numClusters=" + numClusters +
-                '}';
     }
 }

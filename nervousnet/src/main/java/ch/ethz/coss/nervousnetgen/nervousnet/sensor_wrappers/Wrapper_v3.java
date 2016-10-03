@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import ch.ethz.coss.nervousnetgen.nervousnet.configuration.ConfigurationClass;
-import ch.ethz.coss.nervousnetgen.nervousnet.database.Constants;
+import ch.ethz.coss.nervousnetgen.database.Constants;
 import ch.ethz.coss.nervousnetgen.nervousnet.database.Store;
 import ch.ethz.coss.nervousnetgen.nervousnet.database.iStore;
 
@@ -46,7 +46,7 @@ public class Wrapper_v3 implements iWrapper, SensorEventListener {
         String[] columnNames = new String[3+nParam];
         String[] columnTypes = new String[3+nParam];
 
-        columnNames[0] = "timestamp";
+        columnNames[0] = Constants.TIMESTAMP;
         columnTypes[0] = "BIGINT";
 
         columnNames[1] = "metadata";
