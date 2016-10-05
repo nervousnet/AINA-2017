@@ -1,6 +1,6 @@
 package ch.ethz.coss.nervousnetgen.virtual.configuration;
 
-import ch.ethz.coss.nervousnetgen.sensor.iSensorReadingConfiguration;
+import ch.ethz.coss.nervousnetgen.nervousnet.sensor.iSensorReadingConfiguration;
 
 /**
  * Created by ales on 03/10/16.

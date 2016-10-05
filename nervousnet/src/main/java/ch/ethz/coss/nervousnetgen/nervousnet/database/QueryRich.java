@@ -8,9 +8,8 @@ import android.os.Build;
 
 import java.util.ArrayList;
 
-import ch.ethz.coss.nervousnetgen.database.Constants;
-import ch.ethz.coss.nervousnetgen.sensor.SensorReading;
-import ch.ethz.coss.nervousnetgen.sensor.iSensorReadingConfiguration;
+import ch.ethz.coss.nervousnetgen.nervousnet.sensor.SensorReading;
+import ch.ethz.coss.nervousnetgen.nervousnet.sensor.iSensorReadingConfiguration;
 
 
 /**

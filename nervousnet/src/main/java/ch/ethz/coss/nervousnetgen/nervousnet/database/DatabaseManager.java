@@ -1,4 +1,4 @@
-package ch.ethz.coss.nervousnetgen.database;
+package ch.ethz.coss.nervousnetgen.nervousnet.database;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -9,7 +9,7 @@ import android.text.TextUtils;
 
 import java.util.ArrayList;
 
-import ch.ethz.coss.nervousnetgen.sensor.SensorReading;
+import ch.ethz.coss.nervousnetgen.nervousnet.sensor.SensorReading;
 
 /**
  * Created by ales on 03/10/16.

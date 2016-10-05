@@ -7,7 +7,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
 
-import ch.ethz.coss.nervousnetgen.sensor.SensorReading;
+import ch.ethz.coss.nervousnetgen.nervousnet.sensor.SensorReading;
 import ch.ethz.coss.nervousnetgen.storage.iStore;
 
 /**

@@ -1,4 +1,4 @@
-package ch.ethz.coss.nervousnetgen.database;
+package ch.ethz.coss.nervousnetgen.nervousnet.database;
 
 /**
  * Created by ales on 26/09/16.

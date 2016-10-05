@@ -1,4 +1,4 @@
-package ch.ethz.coss.nervousnetgen.sensor;
+package ch.ethz.coss.nervousnetgen.nervousnet.sensor;
 
 /**
  * Created by ales on 03/10/16.

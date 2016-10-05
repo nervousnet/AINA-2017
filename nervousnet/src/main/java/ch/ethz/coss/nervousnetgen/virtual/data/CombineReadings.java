@@ -2,7 +2,8 @@ package ch.ethz.coss.nervousnetgen.virtual.data;
 
 import java.util.ArrayList;
 
-import ch.ethz.coss.nervousnetgen.sensor.SensorReading;
+import ch.ethz.coss.nervousnetgen.nervousnet.sensor.SensorReading;
+import ch.ethz.coss.nervousnetgen.virtual.virtual_sensor.VirtualSensor;
 
 /**
  * Created by ales on 02/10/16.
@@ -11,7 +12,7 @@ public class CombineReadings {
 
     private static final long initWindowSizeMiliseconds = 1000;
 
-    public static ArrayList<SensorReading> combine(
+    public static ArrayList<VirtualSensor> combine(
             ArrayList<ArrayList<SensorReading>> listOfSensorsReadings, ArrayList<String> paramNames){
 
         long startTimestamp = Long.MIN_VALUE;
@@ -38,7 +39,7 @@ public class CombineReadings {
         }
 
 
-        ArrayList<SensorReading> vsparr = new ArrayList<>();
+        ArrayList<VirtualSensor> vsparr = new ArrayList<>();
 
         while ( start <= stopTimestamp ) {
 
@@ -50,7 +51,7 @@ public class CombineReadings {
                 }
             }
 
-            SensorReading original = new SensorReading();
+            VirtualSensor original = new VirtualSensor();
 
             // Set timestamp of the combined virtual point
 

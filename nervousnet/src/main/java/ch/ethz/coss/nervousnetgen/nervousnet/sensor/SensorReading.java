@@ -1,4 +1,4 @@
-package ch.ethz.coss.nervousnetgen.sensor;
+package ch.ethz.coss.nervousnetgen.nervousnet.sensor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,6 +9,7 @@ import java.util.List;
  */
 public class SensorReading {
 
+    protected int id;
     protected String sensorName;
     private long timestampEpoch;
     protected List<String> parametersNames;
@@ -59,6 +60,15 @@ public class SensorReading {
         if (values == null || values.length != paramNames.size())
             this.values = new Object[this.parametersNames.size()];
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         return "SensorReading{" +

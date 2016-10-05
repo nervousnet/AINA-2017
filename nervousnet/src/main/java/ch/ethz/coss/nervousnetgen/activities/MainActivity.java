@@ -1,7 +1,6 @@
 package ch.ethz.coss.nervousnetgen.activities;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,15 +10,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import ch.ethz.coss.nervousnetgen.R;
-import ch.ethz.coss.nervousnetgen.database.DatabaseManager;
+import ch.ethz.coss.nervousnetgen.nervousnet.database.DatabaseManager;
 import ch.ethz.coss.nervousnetgen.nervousnet.configuration.ConfigurationClass;
 import ch.ethz.coss.nervousnetgen.nervousnet.configuration.ConfigurationLoader;
-import ch.ethz.coss.nervousnetgen.nervousnet.database.QueryRich;
-import ch.ethz.coss.nervousnetgen.sensor.SensorReading;
 import ch.ethz.coss.nervousnetgen.nervousnet.sensor_wrappers.Wrapper_v2;
 import ch.ethz.coss.nervousnetgen.nervousnet.sensor_wrappers.Wrapper_v3;
 import ch.ethz.coss.nervousnetgen.nervousnet.sensor_wrappers.iWrapper;
-import ch.ethz.coss.nervousnetgen.virtual.VirtualMain;
 
 public class MainActivity extends Activity {
 
@@ -69,7 +65,7 @@ public class MainActivity extends Activity {
         });
 
         allButton = (Button) findViewById(R.id.getAllButton);
-        initGetAll(this);
+        //initGetAll(this);
 
 
         Log.d("MAIN", "Buttons initialized");
@@ -128,14 +124,14 @@ public class MainActivity extends Activity {
     }
 
 
-    private void initGetAll(final Context context){
+    /*private void initGetAll(final Context context){
         allButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Perform action on click
                 Log.d("MAIN", "All button clicked");
-                /*for ( ConfigurationClass cc : confClassList) {
+                *//*for ( ConfigurationClass cc : confClassList) {
                     databaseHelper.printTable(cc.getSensorName());
-                }*/
+                }*//*
                 QueryRich query = new QueryRich(context);
                 for ( String sensorName : sensors.keySet() ) {
                     ArrayList<SensorReading> result = query.getAll(sensors.get(sensorName));
@@ -143,6 +139,6 @@ public class MainActivity extends Activity {
                 }
             }
         });
-    }
+    }*/
 
 }

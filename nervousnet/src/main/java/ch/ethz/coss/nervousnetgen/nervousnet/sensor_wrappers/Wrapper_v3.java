@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import ch.ethz.coss.nervousnetgen.nervousnet.configuration.ConfigurationClass;
-import ch.ethz.coss.nervousnetgen.database.Constants;
+import ch.ethz.coss.nervousnetgen.nervousnet.database.Constants;
 import ch.ethz.coss.nervousnetgen.nervousnet.database.Store;
 import ch.ethz.coss.nervousnetgen.nervousnet.database.iStore;
 

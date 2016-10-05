@@ -1,8 +1,8 @@
-package ch.ethz.coss.nervousnetgen.database;
+package ch.ethz.coss.nervousnetgen.nervousnet.database;
 
 import java.util.ArrayList;
 
-import ch.ethz.coss.nervousnetgen.sensor.SensorReading;
+import ch.ethz.coss.nervousnetgen.nervousnet.sensor.SensorReading;
 
 /**
  * Created by ales on 01/10/16.

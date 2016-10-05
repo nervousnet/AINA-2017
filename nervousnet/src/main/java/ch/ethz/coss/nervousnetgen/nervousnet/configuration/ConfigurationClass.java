@@ -2,7 +2,7 @@ package ch.ethz.coss.nervousnetgen.nervousnet.configuration;
 
 import java.util.Arrays;
 
-import ch.ethz.coss.nervousnetgen.sensor.iSensorReadingConfiguration;
+import ch.ethz.coss.nervousnetgen.nervousnet.sensor.iSensorReadingConfiguration;
 
 /**
  * Created by ales on 21/09/16.
