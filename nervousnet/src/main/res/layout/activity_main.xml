@@ -9,41 +9,61 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".activities.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        android:id="@+id/textView" />
-
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Display All Data"
-        android:id="@+id/getAllButton"
-        android:layout_above="@+id/buttonCommonTable"
-        android:layout_centerHorizontal="true" />
+        android:text="START"
+        android:id="@+id/button_start_nervousnet"
+        android:layout_below="@+id/text_nervousnet"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Stop"
-        android:id="@+id/stopButton"
-        android:layout_above="@+id/getAllButton"
-        android:layout_centerHorizontal="true" />
+        android:id="@+id/button_stop_nervousnet"
+        android:layout_alignTop="@+id/button_start_nervousnet"
+        android:layout_toRightOf="@+id/button_start_nervousnet"
+        android:layout_toEndOf="@+id/button_start_nervousnet" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="DISPLAY COMMON TABLE"
-        android:id="@+id/buttonCommonTable"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:text="start"
+        android:id="@+id/button_start_virtual"
+        android:layout_below="@+id/text_virtual"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="START"
-        android:id="@+id/buttonStart"
+        android:text="stop"
+        android:id="@+id/button_stop_virtual"
+        android:layout_alignTop="@+id/button_start_virtual"
+        android:layout_alignLeft="@+id/button_stop_nervousnet"
+        android:layout_alignStart="@+id/button_stop_nervousnet" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Nervousnet"
+        android:id="@+id/text_nervousnet"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Virtual Sensors"
+        android:id="@+id/text_virtual"
+        android:layout_below="@+id/button_start_nervousnet"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="27dp" />
+
 </RelativeLayout>

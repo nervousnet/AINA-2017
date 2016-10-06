@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * other details. Additionally, it includes array of all points under its supervision -
  * the points, belonging to this cluster/centroid.
  */
-public class Cluster implements iCluster {
+public class Cluster {
 
     private double[] centroid;
     private ArrayList<iPoint> points = new ArrayList<iPoint>();
@@ -34,6 +34,10 @@ public class Cluster implements iCluster {
 
     public void addPoint(iPoint point){
         this.points.add(point);
+    }
+
+    public static Cluster dummyClass(){
+        return new Cluster();
     }
 
 }

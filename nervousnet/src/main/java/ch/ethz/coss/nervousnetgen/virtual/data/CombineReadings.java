@@ -3,6 +3,7 @@ package ch.ethz.coss.nervousnetgen.virtual.data;
 import java.util.ArrayList;
 
 import ch.ethz.coss.nervousnetgen.nervousnet.sensor.SensorReading;
+import ch.ethz.coss.nervousnetgen.virtual.exceptions.NoData;
 import ch.ethz.coss.nervousnetgen.virtual.virtual_sensor.VirtualSensor;
 
 /**
@@ -13,13 +14,19 @@ public class CombineReadings {
     private static final long initWindowSizeMiliseconds = 1000;
 
     public static ArrayList<VirtualSensor> combine(
-            ArrayList<ArrayList<SensorReading>> listOfSensorsReadings, ArrayList<String> paramNames){
+            ArrayList<ArrayList<SensorReading>> listOfSensorsReadings, ArrayList<String> paramNames) throws NoData {
 
         long startTimestamp = Long.MIN_VALUE;
         long stopTimestamp = Long.MIN_VALUE;
 
         //1. get the beginning and end point of the frame, used for cuting into intervals
         for( ArrayList<SensorReading> arr : listOfSensorsReadings ){
+
+            // TODO Check if array is empyt, if so, we need to do something
+            if (arr.isEmpty()){
+                throw new NoData("Sensor array for one of the specified sensors is empty.");
+            }
+
             long tmpStart = arr.get(0).getTimestampEpoch();
             if (tmpStart > startTimestamp)
                 startTimestamp = tmpStart;

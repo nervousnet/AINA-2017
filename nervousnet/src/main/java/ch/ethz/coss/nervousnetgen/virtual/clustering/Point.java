@@ -7,7 +7,7 @@ package ch.ethz.coss.nervousnetgen.virtual.clustering;
  */
 public class Point implements iPoint{
     protected double[] coordinates;
-    protected iCluster cluster;
+    protected Cluster cluster;
     protected Object reference;
 
     public Point(double[] coordinates){
@@ -27,7 +27,7 @@ public class Point implements iPoint{
         return this.coordinates;
     }
 
-    public iCluster getCluster(){
+    public Cluster getCluster(){
         return cluster;
     }
 
@@ -39,7 +39,7 @@ public class Point implements iPoint{
         this.reference = ref;
     }
 
-    public void setCluster(iCluster c){
+    public void setCluster(Cluster c){
         this.cluster = c;
     }
 
