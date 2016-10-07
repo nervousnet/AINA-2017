@@ -7,112 +7,27 @@ package ch.ethz.coss.nervousnetgen.virtual.clustering;
  */
 import android.util.Log;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 public class KMeans implements iClustering {
 
     private int numOfClusters;
     private int numOfDimensions;
-    private ArrayList<Cluster> clusters;
 
     public KMeans(int numOfDimensions, int numOfClusters) {
         this.numOfDimensions = numOfDimensions;
         this.numOfClusters = numOfClusters;
     }
 
-    //The process to calculate the K Means, with iterating method.
-    @Override
-    public ArrayList<Cluster> compute(ArrayList<? extends iPoint> points) {
+    private ArrayList<Cluster> initClusters(ArrayList<? extends iPoint> points){
 
-        Log.d("KMEANS", "Start computing clusters ...");
-
-        boolean finish = false;
-
-        initClusters(points);
-
-        if (points.size() <= 0) finish = true;
-
-        // Add in new data, one at a time, recalculating centroids with each new one.
-        while(!finish) {
-            //Clear cluster state
-            clearClusters(clusters);
-
-            List<Cluster> lastCentroids = getCentroids(clusters);
-
-            //Assign points to the closer cluster
-            boolean trainingPhase = true;
-            assignCluster(points, clusters);
-
-            //Calculate new centroids
-            calculateCentroids(clusters);
-
-            List<Cluster> currentCentroids = getCentroids(clusters);
-
-            //Calculates total distance between new and old Centroids
-            double distance = 0;
-            for(int i = 0; i < lastCentroids.size(); i++)
-                distance += Util.distance(lastCentroids.get(i).getCentroid(),
-                        currentCentroids.get(i).getCentroid());
-
-            if(distance == 0) {
-                finish = true;
-            }
-            if(Double.isNaN(distance))
-                finish = true;
-            Log.d("KMEAN", "Cluster diff ... "+distance);
-        }
-
-        for(Cluster c : clusters)
-            Log.d("KMEANS-final-centroids", Arrays.toString(c.getCentroid()) + "");
-
-        Log.d("KMEANS", "Computing clusters finished!");
-        return clusters;
-    }
-
-    @Override
-    public Cluster classify(iPoint point) {
-        double min = Double.MAX_VALUE;
-        Cluster cluster = null;
-
-        for(int i = 0; i < this.numOfClusters; i++) {
-            Cluster c = clusters.get(i);
-            double distance = Util.distance( point.getCoordinates(), c.getCentroid() );
-            if(distance < min){
-                min = distance;
-                cluster = c;
-            }
-        }
-        return cluster;
-    }
-
-    @Override
-    public Cluster classify(double[] point) {
-        double min = Double.MAX_VALUE;
-        Cluster cluster = null;
-
-        for(int i = 0; i < this.numOfClusters; i++) {
-            Cluster c = clusters.get(i);
-            double distance = Util.distance(c.getCentroid(), point);
-            if(distance < min){
-                min = distance;
-                cluster = c;
-            }
-        }
-        return cluster;
-    }
-
-    @Override
-    public ArrayList<Cluster> getClusters() {
-        return this.clusters;
-    }
-
-
-    private void initClusters(ArrayList<? extends iPoint> points){
-
-        clusters = new ArrayList<>();
+        ArrayList<Cluster> clusters = new ArrayList<>();
         int sizeOfPoints = points.size();
         Random rand = new Random();
         Log.d("INIT-CLUSTER", "Size " + sizeOfPoints);
@@ -127,88 +42,141 @@ public class KMeans implements iClustering {
             // several times
             for( int j = 0; j < coordinates.length; j++ )
                 coordinates[j] += coordinates[j] * (1 + rand.nextDouble());
-            Cluster c = Cluster.dummyClass();
-            c.setCentroid(coordinates);
+            Cluster c = new Cluster();
+            c.setCoordinates(coordinates);
             clusters.add(c);
-            Log.d("KMEANS-init-centroids", Arrays.toString(c.getCentroid()) + "");
+            Log.d("KMEANS-init-centroids", Arrays.toString(c.getCoordinates()) + "");
         }
+
+        return clusters;
     }
 
-    private void clearClusters(ArrayList<Cluster> clusters) {
-        for(Cluster cluster : clusters) {
-            cluster.clear();
+
+    //The process to calculate the K Means, with iterating method.
+    @Override
+    public ArrayList<Cluster> compute(ArrayList<? extends iPoint> points) {
+
+        Log.d("KMEANS", "Start computing clusters ...");
+
+        boolean finish = false;
+
+        ArrayList<Cluster> clusters = initClusters(points);
+
+        if (points.size() <= 0) finish = true;
+
+        // Add in new data, one at a time, recalculating centroids with each new one.
+        while(!finish) {
+            //Assign points to the closer cluster
+            assignCluster(points, clusters);
+            //Calculate new centroids
+            ArrayList<Cluster> newClusters = calculateCentroids(points, clusters);
+            //Calculates total distance between new and old Centroids
+            double distance = 0;
+            int nc = clusters.size();
+            for(int i = 0; i < nc; i++)
+                distance += Util.distance(clusters.get(i).getCoordinates(),
+                        newClusters.get(i).getCoordinates());
+
+            if(distance == 0) {
+                finish = true;
+            }
+            if(Double.isNaN(distance))
+                finish = true;
+            Log.d("KMEAN", "Cluster diff ... "+distance);
+            clusters = newClusters;
         }
+
+        for(Cluster c : clusters)
+            Log.d("KMEANS-final-centroids", Arrays.toString(c.getCoordinates()) + "");
+
+        Log.d("KMEANS", "Computing clusters finished!");
+        return clusters;
     }
 
-    private List<Cluster> getCentroids(ArrayList<Cluster> clusters) {
-        ArrayList centroids = new ArrayList();
-        for(Cluster cluster : clusters) centroids.add(cluster);
-        return centroids;
+
+    private ArrayList<Cluster> calculateCentroids(ArrayList<? extends iPoint> points, ArrayList<Cluster> clusters) {
+
+        // Initialize array of new clusters that will be computed at the end
+        ArrayList<Cluster> newClusters = new ArrayList<>();
+
+        // Create hash for calculating number of points for each cluster and corresponding sum
+        HashMap<Cluster, Object[]> clusterSumMap = new HashMap<>();
+        for (Cluster c : clusters){
+            clusterSumMap.put(c, new Object[]{(double)0, new double[this.numOfDimensions]});  // init to 0
+
+            // Also initialize new clusters in this loop
+            newClusters.add(new Cluster());
+        }
+
+        // Run through all points and for each point update corresponding cluster with
+        // number of points that belong to that cluster and sum
+        for (iPoint point : points){
+            // Get point's cluster
+            Cluster c = clusters.get(point.getCluster());
+            // Increase number of points
+            Object[] hashValue = clusterSumMap.get(c);
+            hashValue[0] = (double)hashValue[0] + 1;
+            // Update cluster's sum
+            double[] coord = (double[]) hashValue[1];
+            double[] pointCoord = point.getCoordinates();
+            for (int i = 0; i < this.numOfDimensions; i++)
+                coord[i] += pointCoord[i];
+        }
+
+        // Run over clusters again and divide by the number of points to average coordinates
+        // and create new clusters
+        for(int i = 0; i < clusters.size(); i++) {
+            Cluster cluster = clusters.get(i);
+            // Get number of points for the cluster
+            Object[] hashValue = clusterSumMap.get(cluster);
+            double n = (double) hashValue[0];
+            // Get new coordinates
+            double[] coord = (double[]) hashValue[1];
+            for (int j = 0; j < this.numOfDimensions; j++)
+                coord[j] /= n;
+            // Update new cluster with fresh coordinates
+            newClusters.get(i).setCoordinates(coord);
+        }
+        return newClusters;
+    }
+
+
+    @Override
+    public int classify(iPoint point, ArrayList<Cluster> clusters) {
+        double min = Double.MAX_VALUE;
+        int cluster = 0;
+
+        for(int i = 0; i < this.numOfClusters; i++) {
+            Cluster c = clusters.get(i);
+            double distance = Util.distance( point.getCoordinates(), c.getCoordinates() );
+            if(distance < min){
+                min = distance;
+                cluster = i;
+            }
+        }
+        point.setCluster(cluster);
+        return cluster;
+    }
+
+    @Override
+    public int classify(double[] point, ArrayList<Cluster> clusters) {
+        double min = Double.MAX_VALUE;
+        int cluster = 0;
+
+        for(int i = 0; i < this.numOfClusters; i++) {
+            Cluster c = clusters.get(i);
+            double distance = Util.distance(c.getCoordinates(), point);
+            if(distance < min){
+                min = distance;
+                cluster = i;
+            }
+        }
+        return cluster;
     }
 
     private void assignCluster(ArrayList<? extends iPoint> points, ArrayList<Cluster> clusters) {
         for(iPoint point : points) {
-            Cluster cluster = classify(point);
-            point.setCluster(cluster);
-            cluster.addPoint(point);
+            classify(point, clusters);
         }
     }
-
-    private void calculateCentroids(ArrayList<Cluster> clusters) {
-        for(Cluster cluster : clusters) {
-
-            ArrayList<iPoint> points = cluster.getPoints();
-            int n_points = points.size();
-            double[] sum = new double[this.numOfDimensions];  // initialized to 0;
-
-            for(iPoint point : points) {
-                double[] coordinates = point.getCoordinates();
-                for (int dim = 0; dim < this.numOfDimensions; dim++){
-                    sum[dim] += coordinates[dim];
-                }
-            }
-
-            // Average it
-            for (int dim = 0; dim < this.numOfDimensions; dim++)
-                sum[dim] = sum[dim] / n_points;
-
-            // Set cluster to new coordinates
-            cluster.setCentroid(sum);
-        }
-    }
-
-
-
-    private double[] generateMinCoord(ArrayList<iPoint> points){
-        int size = points.size();
-        int nOfDimensions = points.get(0).getDimensions();
-        double[] minCoord = points.get(0).getCoordinates();
-        double[] curCoord = null;
-
-        for (int i = 0; i < size; i++){
-            curCoord = points.get(i).getCoordinates();
-            for (int dim = 0; dim < nOfDimensions; dim++){
-                if (curCoord[dim] < minCoord[dim])
-                    minCoord[dim] = curCoord[dim];
-            }
-        }
-        return minCoord;
-    }
-
-    private double[] generateMaxCoord(ArrayList<iPoint> points){
-        int size = points.size();
-        int nOfDimenstions = points.get(0).getDimensions();
-        double[] maxCoord = points.get(0).getCoordinates();
-        double[] curCoord = null;
-
-        for (int i = 0; i < size; i++){
-            curCoord = points.get(i).getCoordinates();
-            for (int dim = 0; dim < nOfDimenstions; dim++){
-                if (curCoord[dim] > maxCoord[dim])
-                    maxCoord[dim] = curCoord[dim];
-            }
-        }
-        return maxCoord;
-    }
-
 }

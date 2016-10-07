@@ -1,4 +1,4 @@
-package ch.ethz.coss.nervousnetgen.virtual.data;
+package ch.ethz.coss.nervousnetgen.virtual.virtual_sensor_generator;
 
 import java.util.ArrayList;
 

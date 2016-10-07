@@ -9,7 +9,6 @@ import java.util.ArrayList;
  */
 public interface iClustering {
     public ArrayList<Cluster> compute(ArrayList<? extends iPoint> points);
-    public Cluster classify(iPoint point);
-    public Cluster classify(double[] point);
-    public ArrayList<Cluster> getClusters();
+    public int classify(iPoint point, ArrayList<Cluster> clusters);
+    public int classify(double[] point, ArrayList<Cluster> clusters);
 }

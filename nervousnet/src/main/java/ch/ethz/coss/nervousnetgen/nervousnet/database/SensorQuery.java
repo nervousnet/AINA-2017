@@ -14,9 +14,9 @@ import ch.ethz.coss.nervousnetgen.nervousnet.sensor.SensorReading;
 /**
  * Created by ales on 03/10/16.
  */
-public class DatabaseManager extends SQLiteOpenHelper implements iDatabaseManager {
+public class SensorQuery extends SQLiteOpenHelper implements iSensorQuery {
 
-    public DatabaseManager(Context context) {
+    public SensorQuery(Context context) {
         super(context, Constants.DATABASE_NAME, null, Constants.DATABASE_VERSION);
     }
 

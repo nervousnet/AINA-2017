@@ -10,7 +10,7 @@ import ch.ethz.coss.nervousnetgen.virtual.clustering.iPoint;
 public class VirtualSensor extends SensorReading implements iPoint {
 
     double[] coordinates;
-    Cluster cluster;
+    int cluster;
 
     @Override
     public int getDimensions() {
@@ -23,12 +23,12 @@ public class VirtualSensor extends SensorReading implements iPoint {
     }
 
     @Override
-    public Cluster getCluster() {
+    public int getCluster() {
         return cluster;
     }
 
     @Override
-    public void setCluster(Cluster c) {
+    public void setCluster(int c) {
         this.cluster = c;
     }
 

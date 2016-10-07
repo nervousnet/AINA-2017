@@ -7,7 +7,7 @@ import ch.ethz.coss.nervousnetgen.nervousnet.sensor.SensorReading;
 /**
  * Created by ales on 01/10/16.
  */
-public interface iDatabaseManager {
+public interface iSensorQuery {
 
     public ArrayList<SensorReading> getReadings(String sensorID, ArrayList<String> sensorParamNames);
     public ArrayList<SensorReading> getReadings(String sensorID, ArrayList<String> sensorParamNames,

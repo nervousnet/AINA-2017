@@ -11,14 +11,14 @@ import java.util.HashMap;
 /**
  * Created by ales on 26/09/16.
  */
-public class Store extends SQLiteOpenHelper implements iStore {
+public class SensorStore extends SQLiteOpenHelper implements iSensorStore {
 
-    private static final String LOG_TAG = Store.class.getSimpleName();
+    private static final String LOG_TAG = SensorStore.class.getSimpleName();
 
     private String tableName;
     private String[] columnNames;
 
-    public Store(Context context, String tableName, String[] columnNames, String[] columnTypes) {
+    public SensorStore(Context context, String tableName, String[] columnNames, String[] columnTypes) {
         super(context, Constants.DATABASE_NAME, null, Constants.DATABASE_VERSION);
         this.columnNames = columnNames;
         this.tableName = tableName;

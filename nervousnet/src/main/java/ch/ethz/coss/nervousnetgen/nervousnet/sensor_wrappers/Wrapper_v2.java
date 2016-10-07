@@ -11,8 +11,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import ch.ethz.coss.nervousnetgen.nervousnet.database.Constants;
-import ch.ethz.coss.nervousnetgen.nervousnet.database.Store;
-import ch.ethz.coss.nervousnetgen.nervousnet.database.iStore;
+import ch.ethz.coss.nervousnetgen.nervousnet.database.SensorStore;
+import ch.ethz.coss.nervousnetgen.nervousnet.database.iSensorStore;
 
 /**
  * Created by ales on 20/09/16.
@@ -23,7 +23,7 @@ public class Wrapper_v2 implements iWrapper, SensorEventListener {
 
     private final SensorManager mSensorManager;
     private final Sensor sensor;
-    private iStore databaseHandler;
+    private iSensorStore databaseHandler;
 
     private final String sensorName;
     private final String[] parametersNames;
@@ -33,7 +33,7 @@ public class Wrapper_v2 implements iWrapper, SensorEventListener {
     private final int[] parametersPositions;
 
     // Extra for testing
-    private iStore databaseHandlerCommonTable;
+    private iSensorStore databaseHandlerCommonTable;
 
 
     // This is actually extraction from config file
@@ -67,7 +67,7 @@ public class Wrapper_v2 implements iWrapper, SensorEventListener {
         }
 
 
-        this.databaseHandler = new Store(context, sensorName, columnNames, columnTypes);
+        this.databaseHandler = new SensorStore(context, sensorName, columnNames, columnTypes);
 
         this.sensorName = sensorName;
         this.parametersNames = paramNames;

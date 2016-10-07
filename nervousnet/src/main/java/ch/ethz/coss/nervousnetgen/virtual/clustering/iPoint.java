@@ -9,6 +9,6 @@ public interface iPoint {
 
     public int getDimensions();
     public double[] getCoordinates();
-    public Cluster getCluster();
-    public void setCluster(Cluster c);
+    public int getCluster();
+    public void setCluster(int c);
 }
