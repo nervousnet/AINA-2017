@@ -126,14 +126,25 @@ public class MainActivity extends Activity {
     }
 
     public void startVirtual(Context context){
-        VirtualMain vm = new VirtualMain(context, new SensorQuery(context));
+        final VirtualMain vm = new VirtualMain(context, new SensorQuery(context));
         //TODO for now, run only first virtual sensor
-        try {
-            vm.periodic(0);
-            Log.d("MAIN", "Finish virtual");
-        } catch (NoData noData) {
-            Log.d("MAIN-ERROR", noData.getMessage());
-        }
+
+        // TODO test
+        final Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    vm.testClustering();
+                    //vm.periodic(0);
+                    Log.d("MAIN", "Finish virtual");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        thread.start();
+
     }
 
 

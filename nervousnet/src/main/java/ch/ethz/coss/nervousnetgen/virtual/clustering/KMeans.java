@@ -54,7 +54,7 @@ public class KMeans implements iClustering {
 
     //The process to calculate the K Means, with iterating method.
     @Override
-    public ArrayList<Cluster> compute(ArrayList<? extends iPoint> points) {
+    public ArrayList<Cluster> compute(ArrayList<? extends iPoint> points) throws ClusteringException {
 
         Log.d("KMEANS", "Start computing clusters ...");
 
@@ -75,13 +75,14 @@ public class KMeans implements iClustering {
             int nc = clusters.size();
             for(int i = 0; i < nc; i++)
                 distance += Util.distance(clusters.get(i).getCoordinates(),
-                        newClusters.get(i).getCoordinates());
+                        newClusters.get(i).getCoordinates(), numOfDimensions);
 
             if(distance == 0) {
                 finish = true;
             }
-            if(Double.isNaN(distance))
-                finish = true;
+            if(Double.isNaN(distance)) {
+                throw new ClusteringException("Distance between clusters is NaN");
+            }
             Log.d("KMEAN", "Cluster diff ... "+distance);
             clusters = newClusters;
         }
@@ -148,7 +149,7 @@ public class KMeans implements iClustering {
 
         for(int i = 0; i < this.numOfClusters; i++) {
             Cluster c = clusters.get(i);
-            double distance = Util.distance( point.getCoordinates(), c.getCoordinates() );
+            double distance = Util.distance( point.getCoordinates(), c.getCoordinates() , numOfDimensions);
             if(distance < min){
                 min = distance;
                 cluster = i;
@@ -165,7 +166,7 @@ public class KMeans implements iClustering {
 
         for(int i = 0; i < this.numOfClusters; i++) {
             Cluster c = clusters.get(i);
-            double distance = Util.distance(c.getCoordinates(), point);
+            double distance = Util.distance(c.getCoordinates(), point, numOfDimensions);
             if(distance < min){
                 min = distance;
                 cluster = i;

@@ -12,8 +12,8 @@
             "Lux"
           ]
         },
-        "samplingRate" : 1000,
-        "slidingWindow" : 1000000,
+        "samplingRate" : 60000,
+        "slidingWindow" : 86400000,
         "virtualSensorName" : "TestVirtulSensor"
       }
     ]

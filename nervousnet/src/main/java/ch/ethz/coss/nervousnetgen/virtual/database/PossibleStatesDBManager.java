@@ -7,9 +7,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-
-import ch.ethz.coss.nervousnetgen.virtual.clustering.Point;
 
 /**
  * Created by ales on 07/10/16.
@@ -62,7 +59,7 @@ public class PossibleStatesDBManager extends SQLiteOpenHelper {
     public long store(int id, double[] values){
 
         ContentValues insertList = new ContentValues();
-        insertList.put(Constants.ID, id);
+        insertList.put(Constants.POSSIBLE_STATES_ID, id);
         for (int i = 0; i < this.dimension; i++){
             String name = this.columnNames.get(i);
             Object val = values[i];

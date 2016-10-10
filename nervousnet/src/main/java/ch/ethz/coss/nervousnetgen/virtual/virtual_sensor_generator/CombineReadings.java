@@ -11,10 +11,10 @@ import ch.ethz.coss.nervousnetgen.virtual.virtual_sensor.VirtualSensor;
  */
 public class CombineReadings {
 
-    private static final long initWindowSizeMiliseconds = 1000;
-
     public static ArrayList<VirtualSensor> combine(
-            ArrayList<ArrayList<SensorReading>> listOfSensorsReadings, ArrayList<String> paramNames) throws NoData {
+            ArrayList<ArrayList<SensorReading>> listOfSensorsReadings,
+            ArrayList<String> paramNames,
+            long samplingRateInMilisec) throws NoData {
 
         long startTimestamp = Long.MIN_VALUE;
         long stopTimestamp = Long.MIN_VALUE;
@@ -37,7 +37,7 @@ public class CombineReadings {
 
         // Let's take interval as 1s:
         long start = startTimestamp;
-        long step = initWindowSizeMiliseconds;
+        long step = samplingRateInMilisec;
 
         // Initialize pointes which will run through all arrays
         int[] pointers = new int[listOfSensorsReadings.size()];
