@@ -101,7 +101,7 @@ public class Wrapper_v3 implements iWrapper, SensorEventListener {
     public void onSensorChanged(SensorEvent sensorEvent) {
         long timestamp = System.currentTimeMillis();
         //Log.d(LOG_TAG, "onSenesorChanged activated ...");
-        Log.d(LOG_TAG, "Reading " + sensorName + "...");
+        //Log.d(LOG_TAG, "Reading " + sensorName + "...");
 
         // Create element, to store all data to
         HashMap<String, Object> sample = new HashMap<>();
@@ -111,7 +111,7 @@ public class Wrapper_v3 implements iWrapper, SensorEventListener {
         sample.put("samplingPeriod" , samplingPeriod);
         sample.put("metadata" , Arrays.toString(metadata));
         // 2. Insert values
-        Log.d(LOG_TAG, "timestamp " + sample.get("timestamp") + " sampling " + sample.get("samplingPeriod") + " metadata " + sample.get("metadata") );
+        //Log.d(LOG_TAG, "timestamp " + sample.get("timestamp") + " sampling " + sample.get("samplingPeriod") + " metadata " + sample.get("metadata") );
         for (int i = 0; i < parametersPositions.length; i++) {
             Log.d(LOG_TAG, "Put (key, value) = (" + parametersNames[i] + ", " + sensorEvent.values[parametersPositions[i]] + ")");
             sample.put(parametersNames[i], sensorEvent.values[parametersPositions[i]]);

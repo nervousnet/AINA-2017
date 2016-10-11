@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.jjoe64.graphview.GraphView;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -27,8 +29,12 @@ public class MainActivity extends Activity {
     Button buttonStopNervousnet;
     Button buttonStartVirtual;
     Button buttonStopVirtual;
+    Button buttonPrintPerformance;
+    GraphView graphView;
 
     Context context;
+
+    VirtualMain vm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,11 +71,38 @@ public class MainActivity extends Activity {
         buttonStopVirtual = (Button) findViewById(R.id.button_stop_virtual);
         buttonStopVirtual.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
+                //numOfClust(context);
+                printReadings(context);
             }
         });
 
+        buttonPrintPerformance = (Button) findViewById(R.id.button_print);
+        buttonPrintPerformance.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                vm.printString(vm.performanceListString);
+            }
+        });
+
+        graphView = (GraphView) findViewById(R.id.graph);
+
         wrapperConfiguration();
+        vm = new VirtualMain(context, new SensorQuery(context));
+
+
+        /*Thread thread = new Thread() {
+            @Override
+            public void run() {
+
+                try {
+                    sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                startAllSensors();
+            }
+        };
+
+        thread.start();*/
     }
 
 
@@ -126,7 +159,6 @@ public class MainActivity extends Activity {
     }
 
     public void startVirtual(Context context){
-        final VirtualMain vm = new VirtualMain(context, new SensorQuery(context));
         //TODO for now, run only first virtual sensor
 
         // TODO test
@@ -134,6 +166,7 @@ public class MainActivity extends Activity {
             @Override
             public void run() {
                 try {
+                    //vm.plotVS();
                     vm.testClustering();
                     //vm.periodic(0);
                     Log.d("MAIN", "Finish virtual");
@@ -145,6 +178,44 @@ public class MainActivity extends Activity {
 
         thread.start();
 
+    }
+
+
+    public void numOfClust(Context context){
+        //TODO for now, run only first virtual sensor
+
+        // TODO test
+        final Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    vm.numClusters();
+                    //vm.periodic(0);
+                    Log.d("MAIN", "Finish virtual");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        thread.start();
+    }
+
+
+    private void printReadings(Context context){
+        final Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    vm.printReadings();
+                    Log.d("MAIN", "Finish virtual");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        thread.start();
     }
 
 

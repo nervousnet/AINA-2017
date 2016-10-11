@@ -20,10 +20,13 @@ public class StoreStrings extends SQLiteOpenHelper {
 
     private static final String LOG_TAG = StoreStrings.class.getSimpleName();
 
-    private String tableName = "LOG_table";
+    public static String DATABASE_NAME = "TestMeasurementsDBForPublication";
+    private String tableName;
 
-    public StoreStrings(Context context) {
-        super(context, Constants.DATABASE_NAME, null, Constants.DATABASE_VERSION);
+
+    public StoreStrings(Context context, String tableName) {
+        super(context, DATABASE_NAME, null, 1);
+        this.tableName = tableName;
         createNewTable();
     }
 
@@ -35,7 +38,12 @@ public class StoreStrings extends SQLiteOpenHelper {
         database.execSQL("DROP TABLE IF EXISTS " + tableName + ";");
         String sql = "CREATE TABLE " + tableName + " ( " +
                 Constants.ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "String TEXT";
+                "samplingRate INTEGER, " +
+                "dataSize INTEGER, " +
+                "dimension INTEGER, " +
+                "numClusters INTEGER, " +
+                "timeMilis REAL, " +
+                "stdDeviation REAL";
         sql += " );";
         database.execSQL(sql);
     }
@@ -47,15 +55,20 @@ public class StoreStrings extends SQLiteOpenHelper {
     }
 
 
-    public long store(String str){
+    public long store(int samplingRate, int dataSize, int dim, int numClusters, double time, double sd){
 
         ContentValues insertList = new ContentValues();
-        insertList.put("String", str);
+        insertList.put("samplingRate", samplingRate);
+        insertList.put("dataSize", dataSize);
+        insertList.put("dimension", dim);
+        insertList.put("numClusters", numClusters);
+        insertList.put("timeMilis", time);
+        insertList.put("stdDeviation", sd);
 
         SQLiteDatabase db = this.getWritableDatabase();
         long idReturn = db.insert(this.tableName, null, insertList);
         db.close();
-        Log.d(LOG_TAG, "Store new str= "+str);
+        Log.d(LOG_TAG, "Store new item in " + tableName);
         return idReturn;
     }
 

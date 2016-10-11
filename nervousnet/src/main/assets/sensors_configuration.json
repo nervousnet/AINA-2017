@@ -12,7 +12,7 @@
       "not supported yet"
     ],
     "androidParametersPositions" : [ 0 ],
-    "samplingPeriod" : 0
+    "samplingPeriod" : 100000
   },
   {
       "sensorName" : "Accelerometer_v2",

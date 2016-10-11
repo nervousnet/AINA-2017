@@ -39,7 +39,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="stop"
+        android:text="option"
         android:id="@+id/button_stop_virtual"
         android:layout_alignTop="@+id/button_start_virtual"
         android:layout_alignLeft="@+id/button_stop_nervousnet"
@@ -65,5 +65,23 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="27dp" />
+
+    <com.jjoe64.graphview.GraphView
+        android:layout_width="match_parent"
+        android:layout_height="200dip"
+        android:title="Graph Title"
+        android:id="@+id/graph"
+        android:layout_below="@+id/button_start_virtual"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="print"
+        android:id="@+id/button_print"
+        android:layout_alignTop="@+id/button_stop_virtual"
+        android:layout_alignRight="@+id/graph"
+        android:layout_alignEnd="@+id/graph" />
 
 </RelativeLayout>
