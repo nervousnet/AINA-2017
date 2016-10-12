@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -16,8 +17,14 @@ import ch.ethz.coss.nervousnetgen.nervousnet.sensor.SensorReading;
  */
 public class SensorQuery extends SQLiteOpenHelper implements iSensorQuery {
 
+    // TODO: REMOVE
+    SQLiteDatabase database;
+
     public SensorQuery(Context context) {
         super(context, Constants.DATABASE_NAME, null, Constants.DATABASE_VERSION);
+
+        // TODO REMOVE
+        database = this.getReadableDatabase();
     }
 
     public ArrayList<SensorReading> getReadings(String sensorName, ArrayList<String> sensorParamNames){
@@ -40,20 +47,28 @@ public class SensorQuery extends SQLiteOpenHelper implements iSensorQuery {
         return getReadings(sensorParamNames, query);
     }
 
+    @Override
+    public ArrayList<SensorReading> getLatestReadingUnderRange(String sensorName, ArrayList<String> sensorParamNames, long start, long stop, ArrayList<String> selectColumns) {
+        String cols = TextUtils.join(", ", selectColumns);
+        String query = "SELECT " + Constants.ID + ", MAX(" + Constants.TIMESTAMP + ") AS " + Constants.TIMESTAMP+ ", " + cols + " " +
+                "FROM " + sensorName + " WHERE " + Constants.TIMESTAMP + " >= " + start + " AND " +
+                "" + Constants.TIMESTAMP + " <= " + stop + ";";
+
+        ArrayList<SensorReading> readings = getReadings(sensorParamNames, query);
+        return readings;
+    }
+
     public ArrayList<SensorReading> getReadings(ArrayList<String> sensorParamNames,
                                            String query) {
 
         // 1. create the query
 
         // 2. get reference to writable DB
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = this.database;//this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);
 
-        int nColumns = cursor.getColumnCount();
-        String[] columnNames = cursor.getColumnNames();
-
         ArrayList<SensorReading> returnList = new ArrayList<>();
-
+        Log.d("CURSOR", "Count ..." );
         // 3. go over each row, build sensor value and add it to list
         if (cursor.moveToFirst()) {
             do {
@@ -68,7 +83,8 @@ public class SensorQuery extends SQLiteOpenHelper implements iSensorQuery {
                     int indexParam = cursor.getColumnIndex(columnName);
                     Object value = null;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                        switch (cursor.getType(indexParam)) {
+                        int type = cursor.getType(indexParam);
+                        switch (type) {
                             case Constants.FIELD_TYPE_INTEGER:
                                 value = cursor.getInt(indexParam);
                                 break;
@@ -93,7 +109,7 @@ public class SensorQuery extends SQLiteOpenHelper implements iSensorQuery {
                 //Log.d(LOG_TAG, Arrays.toString( values ));
             } while (cursor.moveToNext());
         }
-        db.close();
+        //db.close();
         return returnList;
     }
 

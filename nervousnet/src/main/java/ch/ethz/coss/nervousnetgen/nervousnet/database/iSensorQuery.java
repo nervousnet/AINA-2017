@@ -15,6 +15,10 @@ public interface iSensorQuery {
     public ArrayList<SensorReading> getReadings(String sensorID, ArrayList<String> sensorParamNames,
                                                 long startTimestamp, long stopTimestamp,
                                                 ArrayList<String> selectColumns);
+    public ArrayList<SensorReading> getLatestReadingUnderRange(String sensorID, ArrayList<String> sensorParamNames,
+                                                long startTimestamp, long stopTimestamp,
+                                                ArrayList<String> selectColumns);
+
     //public void storeReading(SensorReading reading);
     //public void storeReadings(ArrayList<SensorReading> list);
 

@@ -28,9 +28,7 @@
         "double"
       ],
       "metadata" : [
-        "not supported yet",
-        "not supported yet",
-        "not supported yet"
+        ""
       ],
       "androidParametersPositions" : [ 0, 1, 2 ],
       "samplingPeriod" : 100000

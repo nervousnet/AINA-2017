@@ -7,21 +7,6 @@
             "accX",
             "accY",
             "accZ"
-          ],
-          "Light_v2" : [
-            "Lux"
-          ]
-        },
-        "samplingRate" : 60000,
-        "slidingWindow" : 86400000,
-        "virtualSensorName" : "VirtualSensorACCLight"
-      },
-      {
-        "sensors" : {
-          "Accelerometer_v2" : [
-            "accX",
-            "accY",
-            "accZ"
           ]
         },
         "samplingRate" : 60000,
@@ -37,6 +22,21 @@
         "samplingRate" : 60000,
         "slidingWindow" : 86400000,
         "virtualSensorName" : "VirtualSensorLight"
+      },
+      {
+        "sensors" : {
+          "Accelerometer_v2" : [
+            "accX",
+            "accY",
+            "accZ"
+          ],
+          "Light_v2" : [
+            "Lux"
+          ]
+        },
+        "samplingRate" : 60000,
+        "slidingWindow" : 86400000,
+        "virtualSensorName" : "VirtualSensorACCLight"
       }
     ]
 }

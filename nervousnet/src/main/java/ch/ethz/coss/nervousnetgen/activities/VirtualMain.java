@@ -9,6 +9,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.TreeSet;
 
 import ch.ethz.coss.nervousnetgen.nervousnet.sensor.SensorReading;
@@ -43,7 +44,7 @@ public class VirtualMain {
     private Context context;
     private GraphView graphView;
 
-    ArrayList<VirtualSensor> virtualPoints;
+
 
 
     public VirtualMain(Context context, iSensorQuery sensorDatabase) {
@@ -168,13 +169,9 @@ public class VirtualMain {
             long start = stop - 86400000;// capture 1 day
 
             // 2. get readings for all sensors
-            ArrayList<ArrayList<SensorReading>> readings = new ArrayList<>();   // data
+
             ArrayList<String> virtualParamNames = new ArrayList<>();
             for (SensorConfiguration sensor : virtualSensorConf.getSensors()) {
-                String sensorID = sensor.getNameID();
-                ArrayList<SensorReading> sensorReadings = sensorDatabase.getReadings(sensorID,
-                        sensor.getParamNames(), start, stop, sensor.getParamNames());
-                readings.add(sensorReadings);
                 virtualParamNames.addAll(sensor.getParamNames());
             }
 
@@ -188,30 +185,80 @@ public class VirtualMain {
             StoreStrings storeAVG = new StoreStrings(context, "MeasurementsAVG"+sensorName);
 
             int[] rateArr = new int[]{60000, 30000, 10000, 1000};
-            //int[] rateArr = new int[]{30000};
+            //int[] rateArr = new int[]{6000000};
 
             int dim = virtualParamNames.size();
 
             for (int samplingRate : rateArr) {
+                int step = samplingRate;
 
-                ArrayList<VirtualSensor> virtualPoints =
-                        CombineReadings.combine(readings, virtualParamNames, samplingRate);
+                long threshold = start;
+                for (SensorConfiguration sensor : virtualSensorConf.getSensors()) {
+                    // FIND FIRST
+                    boolean firstFound = false;
+                    ArrayList<SensorReading> sensorReadings = new ArrayList<>();
+                    do {
+                         sensorReadings = sensorDatabase.getLatestReadingUnderRange(
+                                sensor.getNameID(), sensor.getParamNames(), 0, threshold,//TODO
+                                sensor.getParamNames());
+                        if (!sensorReadings.isEmpty()){
+                            // We found something
+                            break;
+                        }
+                        else {
+                            // Increse threshold
+                            threshold += step;
+                        }
+                    } while (threshold < stop);
 
-                int VPSIZE = virtualPoints.size();
+                    if (sensorReadings.isEmpty()){
+                        // if there is no data for some sensor, then we can not do anything,
+                        // there is no data
+                        return;
+                    }
 
-                for (VirtualSensor vs : virtualPoints) {
-                    vs.setCoordinates();
+                    // here, we found something and we go to the next sensor
                 }
+                // We have a threshold, that we find something
+                ArrayList<VirtualSensor> virtualSensors = new ArrayList<>();
 
-                int wekaNumOfClusters = numOfClusters(virtualPoints);
+                do {
+
+                    VirtualSensor virtualSensor = new VirtualSensor();
+
+                    // Set timestamp of the combined virtual point
+
+                    virtualSensor.setTimestampEpoch(threshold);
+                    virtualSensor.setParametersNames(virtualParamNames);
+                    Object[] originalValues = virtualSensor.getValues(); // get array to fill it
+
+                    // Fill the VirtualSensor
+                    int pos = 0;
+
+                    for (SensorConfiguration sensor : virtualSensorConf.getSensors()) {
+                        SensorReading reading = sensorDatabase.getLatestReadingUnderRange(
+                                sensor.getNameID(), sensor.getParamNames(), 0, threshold, // TODO, change 0 to start
+                                sensor.getParamNames()).get(0);
+                        Object[] vals = reading.getValues();
+                        for (int i = 0; i < vals.length; i++)
+                            originalValues[pos++] = vals[i];
+                    }
+                    // TODO PATCH
+                    virtualSensor.setCoordinates();
+                    virtualSensors.add(virtualSensor);
+
+                    threshold += step;
+
+                } while (threshold < stop );
+
+                int VPSIZE = virtualSensors.size();
+
+                int wekaNumOfClusters = numOfClusters(virtualSensors);
                 Log.d("WEKA", "Number of clusters by WEKA = " + wekaNumOfClusters);
 
                 int numOfClusters = wekaNumOfClusters;
 
-                    // 3. combine sensor readings
-
                     iClustering clustering = new KMeans(virtualParamNames.size(), numOfClusters);
-
 
                     int nRepetitions = 30;
                     double[] times = new double[nRepetitions];
@@ -223,7 +270,7 @@ public class VirtualMain {
                         do {
                             try {
                                 start_ = System.currentTimeMillis();
-                                clustering.compute(virtualPoints);
+                                clustering.compute(virtualSensors);
                                 stop_ = System.currentTimeMillis();
                                 double diff = (double)(stop_ - start_);
                                 times[i] = diff;
@@ -269,6 +316,8 @@ public class VirtualMain {
 
         }
     }
+
+
     public void printString(ArrayList<String> list){
         for (String str : list){
             Log.d("TIME_PRINT", str);
