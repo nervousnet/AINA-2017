@@ -2,12 +2,16 @@ package ch.ethz.coss.nervousnetgen.virtual.database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import ch.ethz.coss.nervousnetgen.virtual.virtual_sensor.VirtualSensor;
 
 /**
  * Created by ales on 05/10/16.
@@ -32,10 +36,20 @@ public class VirtualSensorDBManager extends SQLiteOpenHelper {
     }
 
 
+    public void dropTableIfExists(){
+        SQLiteDatabase database = this.getWritableDatabase();
+        String sql = "DROP TABLE IF EXISTS " + tableName + ";";
+        database.execSQL(sql);
+    }
+
     private void createTableIfNotExists(){
         Log.d(LOG_TAG, "Create table " + tableName);
         // Create table
         SQLiteDatabase database = this.getWritableDatabase();
+
+        // TODO : REMOVE THIS
+        database.execSQL("DROP TABLE IF EXISTS " + tableName + ";");
+
         String sql = "CREATE TABLE IF NOT EXISTS " + tableName + " ( " +
                 // Define ID
                 Constants.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -85,8 +99,63 @@ public class VirtualSensorDBManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         long idReturn = db.insert(this.tableName, null, insertList);
         db.close();
-        Log.d(LOG_TAG, "Store new value id="+values);
+        //Log.d(LOG_TAG, "Store new value id="+);
         return idReturn;
+    }
+
+
+    public ArrayList<VirtualSensor> getAll() {
+
+        // 1. create the query
+
+        // 2. get reference to writable DB
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + tableName + ";", null);
+
+        ArrayList<VirtualSensor> returnList = new ArrayList<>();
+        Log.d("CURSOR", "Count " + cursor.getCount() );
+        // 3. go over each row, build sensor value and add it to list
+        if (cursor.moveToFirst()) {
+            do {
+                VirtualSensor reading = new VirtualSensor();
+
+                // Update timestamp and values
+                int indexTimestamp = cursor.getColumnIndex(Constants.TIMESTAMP);
+                reading.setTimestampEpoch(cursor.getLong(indexTimestamp));
+                reading.setParametersNames(paramNames);
+
+                for (String columnName : paramNames){
+                    int indexParam = cursor.getColumnIndex(columnName);
+                    Object value = null;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                        int type = cursor.getType(indexParam);
+                        switch (type) {
+                            case Constants.FIELD_TYPE_INTEGER:
+                                value = cursor.getInt(indexParam);
+                                break;
+
+                            case Constants.FIELD_TYPE_FLOAT:
+                                value = cursor.getFloat(indexParam);
+                                break;
+
+                            case Constants.FIELD_TYPE_STRING:
+                                value = cursor.getString(indexParam);
+                                break;
+
+                            default:
+                                value = null;
+                        }
+                    }
+
+                    reading.setValue(columnName, value);
+                }
+
+                returnList.add(reading);
+                //Log.d(LOG_TAG, Arrays.toString( values ));
+            } while (cursor.moveToNext());
+        }
+        db.close();
+        return returnList;
     }
 
     public void removeOlder(long timestamp){

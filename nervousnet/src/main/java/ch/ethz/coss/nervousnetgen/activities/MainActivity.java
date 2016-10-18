@@ -3,8 +3,10 @@ package ch.ethz.coss.nervousnetgen.activities;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 
 import com.jjoe64.graphview.GraphView;
@@ -36,10 +38,19 @@ public class MainActivity extends Activity {
 
     VirtualMain vm;
 
+    PowerManager.WakeLock wl;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);// Initialize button for get All sensor data
+
+        // To keep the phone running
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "My Tag");
+        wl.acquire();
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         context = this.getApplicationContext();
 
@@ -104,6 +115,7 @@ public class MainActivity extends Activity {
 
         thread.start();*/
     }
+
 
 
     public void wrapperConfiguration(){

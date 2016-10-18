@@ -17,14 +17,8 @@ import ch.ethz.coss.nervousnetgen.nervousnet.sensor.SensorReading;
  */
 public class SensorQuery extends SQLiteOpenHelper implements iSensorQuery {
 
-    // TODO: REMOVE
-    SQLiteDatabase database;
-
     public SensorQuery(Context context) {
         super(context, Constants.DATABASE_NAME, null, Constants.DATABASE_VERSION);
-
-        // TODO REMOVE
-        database = this.getReadableDatabase();
     }
 
     public ArrayList<SensorReading> getReadings(String sensorName, ArrayList<String> sensorParamNames){
@@ -64,11 +58,14 @@ public class SensorQuery extends SQLiteOpenHelper implements iSensorQuery {
         // 1. create the query
 
         // 2. get reference to writable DB
-        SQLiteDatabase db = this.database;//this.getReadableDatabase();
+        SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);
 
+        int nColumns = cursor.getColumnCount();
+        String[] columnNames = cursor.getColumnNames();
+
         ArrayList<SensorReading> returnList = new ArrayList<>();
-        Log.d("CURSOR", "Count ..." );
+        Log.d("CURSOR", "Count " + cursor.getCount() );
         // 3. go over each row, build sensor value and add it to list
         if (cursor.moveToFirst()) {
             do {
@@ -109,7 +106,7 @@ public class SensorQuery extends SQLiteOpenHelper implements iSensorQuery {
                 //Log.d(LOG_TAG, Arrays.toString( values ));
             } while (cursor.moveToNext());
         }
-        //db.close();
+        db.close();
         return returnList;
     }
 

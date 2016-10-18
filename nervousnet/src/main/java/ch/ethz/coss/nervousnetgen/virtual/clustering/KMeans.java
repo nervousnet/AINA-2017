@@ -30,7 +30,7 @@ public class KMeans implements iClustering {
         ArrayList<Cluster> clusters = new ArrayList<>();
         int sizeOfPoints = points.size();
         Random rand = new Random();
-        Log.d("INIT-CLUSTER", "Size " + sizeOfPoints);
+        //Log.d("INIT-CLUSTER", "Size " + sizeOfPoints);
         // Choose random centroids
         for (int i = 0; i < this.numOfClusters; i++){
             // Get one of the points as an initial cluster
@@ -45,7 +45,7 @@ public class KMeans implements iClustering {
             Cluster c = new Cluster();
             c.setCoordinates(coordinates);
             clusters.add(c);
-            Log.d("KMEANS-init-centroids", Arrays.toString(c.getCoordinates()) + "");
+            //Log.d("KMEANS-init-centroids", Arrays.toString(c.getCoordinates()) + "");
         }
 
         return clusters;
@@ -56,7 +56,7 @@ public class KMeans implements iClustering {
     @Override
     public ArrayList<Cluster> compute(ArrayList<? extends iPoint> points) throws ClusteringException {
 
-        Log.d("KMEANS", "Start computing clusters ...");
+        //Log.d("KMEANS", "Start computing clusters ...");
 
         boolean finish = false;
 
@@ -83,14 +83,14 @@ public class KMeans implements iClustering {
             if(Double.isNaN(distance)) {
                 throw new ClusteringException("Distance between clusters is NaN");
             }
-            Log.d("KMEAN", "Cluster diff ... "+distance);
+            //Log.d("KMEAN", "Cluster diff ... "+distance);
             clusters = newClusters;
         }
 
-        for(Cluster c : clusters)
-            Log.d("KMEANS-final-centroids", Arrays.toString(c.getCoordinates()) + "");
+        //for(Cluster c : clusters)
+            //Log.d("KMEANS-final-centroids", Arrays.toString(c.getCoordinates()) + "");
 
-        Log.d("KMEANS", "Computing clusters finished!");
+        //Log.d("KMEANS", "Computing clusters finished!");
         return clusters;
     }
 

@@ -35,9 +35,10 @@ public class StoreStrings extends SQLiteOpenHelper {
         Log.d(LOG_TAG, "Create table " + tableName);
         // Drop table first, then we create new one
         SQLiteDatabase database = getWritableDatabase();
-        database.execSQL("DROP TABLE IF EXISTS " + tableName + ";");
-        String sql = "CREATE TABLE " + tableName + " ( " +
-                Constants.ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+        //database.execSQL("DROP TABLE IF EXISTS " + tableName + ";");
+        String sql = "CREATE TABLE IF NOT EXISTS " + tableName + " ( " +
+                Constants.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                Constants.TIMESTAMP + " DATETIME DEFAULT CURRENT_TIMESTAMP, " +
                 "samplingRate INTEGER, " +
                 "dataSize INTEGER, " +
                 "dimension INTEGER, " +
