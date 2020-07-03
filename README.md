@@ -4,6 +4,8 @@ This project was created by Ales Omerzel for the purpose of the research paper:
 
 Pournaras, E., Nikolic, J., Omerzel, A. and Helbing, D., 2017, March. [Engineering Democratization in Internet of Things Data Analytics](https://pdfs.semanticscholar.org/ce27/96de888eec3d4a4c6d661b6959b3653ee9bc.pdf). In 2017 IEEE 31st International Conference on Advanced Information Networking and Applications (AINA) (pp. 994-1003). IEEE.
 
+This code was made publicly available upon request for the reproducibility of results presented in the research paper. The repository was created on 23.4.2020 together with the README.md file and the LICENSE addition. The original code developed in 2016 (and its Git history) that produced results of the research paper is cloned to this repository.
+
 ## Dependencies
 * Weka library:  https://weka.wikispaces.com
 * GraphView-4.0.1: https://github.com/jjoe64/GraphView
